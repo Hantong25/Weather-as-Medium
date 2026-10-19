@@ -1,0 +1,170 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ecebe5"><link rel="icon" href="data:,">
+<title>Ephemeral — Sky Studio · CONCEPT 3D 2026.10.19.2</title><link rel="stylesheet" href="style.css?v=2026.10.19.2"><script src="vendor/p5.min.js"></script><script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script><script type="module" src="sketch.js?v=2026.10.19.2"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="wordmark" href="en.html">EPHEMERAL<span>WEATHER REPORT</span></a>
+  <nav class="view-tabs" aria-label="Workspace"><button data-view="sky" aria-selected="true" role="tab" aria-controls="sky-view">Projection settings</button><button data-view="scene" aria-selected="false" role="tab" aria-controls="scene-view">Concept 3D</button></nav>
+  <span id="phase-status" class="phase-status"></span>
+  <div class="top-actions"><span class="release-banner" role="status">CONCEPT 3D · 2026.10.19.2</span><a id="language-switch" href="index.html" lang="zh-CN" aria-label="Switch to Chinese">中文</a><button id="project">Open projection ↗</button><button id="fullscreen" aria-pressed="false">Fullscreen sky</button></div>
+</header>
+<section id="simulation-controls" aria-label="Weather simulation timeline">
+  <div class="playback">
+    <div class="clock"><strong id="clock">00.0</strong><span id="cycle-duration">60 seconds / cycle · looping</span></div>
+    <button id="play" class="primary" aria-pressed="false">Pause</button><button id="restart">Replay</button>
+    <div class="track">
+      <input id="scrub" type="range" min="0" max="85" step="0.1" value="0" aria-label="Scrub the weather cycle">
+      <div class="timeline" aria-label="Jump to a weather phase"><button data-time="3" style="flex:8"><span>01</span> Sunrise<small>0–8 s</small><i></i></button><button data-time="10" style="flex:4"><span>02</span> Sunny<small>8–12 s</small><i></i></button><button data-time="16" style="flex:10"><span>03</span> Sunset<small>12–22 s</small><i></i></button><button data-time="23.5" style="flex:3"><span>04</span> Overcast night<small>22–25 s</small><i></i></button></div>
+    </div>
+    <button id="stop" class="stop">Stop <kbd>■</kbd></button><button id="recover" hidden>Restart</button>
+  </div>
+</section>
+<noscript>Please enable JavaScript.</noscript>
+<main class="studio-shell" id="studio-shell"><section class="studio-view" id="sky-view" role="tabpanel"><div class="sky-layout">
+
+<figure class="canopy-panel">
+  <div class="view-heading"><span>01 / SKY CANOPY · <span id="style-name">Atmospheric</span></span><span id="run-state">Preview running</span></div>
+  <div class="stage-frame"><div id="stage" class="stage"><div id="canvas-host"></div><button id="exit-fullscreen" aria-pressed="false">Fullscreen sky</button></div></div>
+</figure>
+
+<section class="dock" aria-label="Timing, presets, reflection, camera and output">
+  <div class="dock-head">
+    <div class="dock-tabs" role="tablist"><button role="tab" data-dock="reflection" aria-selected="true" aria-controls="dock-reflection">Reflection check</button><button role="tab" data-dock="timing" aria-selected="false" aria-controls="dock-timing">Timing</button><button role="tab" data-dock="presets" aria-selected="false" aria-controls="dock-presets">Presets</button><button role="tab" data-dock="camera" aria-selected="false" aria-controls="dock-camera">Camera</button><button role="tab" data-dock="output" aria-selected="false" aria-controls="dock-output">Audio file and log</button></div>
+    <p id="notice" class="notice" role="status" aria-live="polite">The preview starts with four visitors. Switching styles keeps the same moment for comparison.</p>
+  </div>
+
+  <div class="dock-panel reflection-panel" id="dock-reflection" role="tabpanel">
+    <div id="reflection-host"></div>
+    <div class="dock-fields">
+      <div class="view-heading"><span>02 / REFLECTION VIEW</span><span id="angle-value">0°</span></div>
+      <label class="angle-label" for="angle">Move around the puddle<input id="angle" type="range" min="0" max="360" step="1" value="0"></label>
+      <div class="compass" aria-label="Viewing direction"><button data-angle="0" aria-label="View from 0 degrees">0°</button><button data-angle="90" aria-label="View from 90 degrees">90°</button><button data-angle="180" aria-label="View from 180 degrees">180°</button><button data-angle="270" aria-label="View from 270 degrees">270°</button></div>
+      <p id="coverage" class="hint">Looking down from about 0.6 m from the puddle centre at 1.62 m eye height. Brightness is a visual approximation.</p>
+    </div>
+  </div>
+
+  <div class="dock-panel" id="dock-timing" role="tabpanel" hidden>
+    <div class="timing-presets"><button data-timing="slow">Slow · 660 s</button><button data-timing="standard" aria-pressed="true">Natural · 60 s</button><button data-timing="quick">Quick · 32 s</button></div>
+    <div class="timing-grid"><fieldset><legend>01 / Sunrise</legend><label for="stage-duration-0">Duration (s)<input id="stage-duration-0" data-duration="0" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-0">Cloud edges (×)<input id="stage-rate-0" data-rate="0" type="number" min="0.1" max="3" step="0.1" value="0.7" required></label></fieldset><fieldset><legend>02 / Sunny</legend><label for="stage-duration-1">Duration (s)<input id="stage-duration-1" data-duration="1" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-1">Cloud edges (×)<input id="stage-rate-1" data-rate="1" type="number" min="0.1" max="3" step="0.1" value="0.8" required></label></fieldset><fieldset><legend>03 / Sunset</legend><label for="stage-duration-2">Duration (s)<input id="stage-duration-2" data-duration="2" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-2">Cloud edges (×)<input id="stage-rate-2" data-rate="2" type="number" min="0.1" max="3" step="0.1" value="0.9" required></label></fieldset><fieldset><legend>04 / Overcast night</legend><label for="stage-duration-3">Duration (s)<input id="stage-duration-3" data-duration="3" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-3">Cloud edges (×)<input id="stage-rate-3" data-rate="3" type="number" min="0.1" max="3" step="0.1" value="0.6" required></label></fieldset></div>
+    <div class="timing-actions"><label for="rate-blend">Speed transition blend (s)<input id="rate-blend" type="number" min="0.5" max="15" step="0.5" value="5"></label><button id="timing-apply">Apply timing and replay</button><p id="timing-error" role="status"></p></div>
+    <p class="hint">Sunrise → sunny → sunset → overcast night loops. The sun follows its real October path over Melbourne; durations only set how long each part lasts. Cloud closes in at night with rain sound and clears before dawn.</p>
+  </div>
+
+  <div class="dock-panel parameter-presets" id="dock-presets" role="tabpanel" hidden>
+    <div id="parameter-presets">
+      <div class="preset-row"><label for="scene-preset-list">Saved parameters<select id="scene-preset-list"></select></label><button id="scene-preset-load">Load</button><button id="scene-preset-default" aria-pressed="false">Use at startup</button><button id="scene-preset-delete">Delete</button></div>
+      <div class="preset-row"><label for="scene-preset-name">Preset name<input id="scene-preset-name" type="text" maxlength="60"></label><button id="scene-preset-save">Save current parameters</button><button id="scene-preset-factory">Factory defaults</button></div>
+    </div>
+    <p class="hint"><span id="default-preset-label"></span> · Saves visuals, geometry, timing and preview count. Live wind and device permissions are not stored.</p>
+    <p id="preset-status" role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="dock-panel camera-panel" id="dock-camera" role="tabpanel" hidden>
+    <div class="camera-box"><video id="camera-video" autoplay muted playsinline></video><canvas id="camera-overlay"></canvas><span id="camera-placeholder">Processed on this device</span></div>
+    <div class="dock-fields">
+      <label class="check"><input id="manual" type="checkbox" checked>Use preview visitor count</label>
+      <div class="button-row"><button id="start">Enable camera counting</button><button id="camera-off" hidden>Turn camera off</button></div>
+      <p id="camera-status" role="status">Using the preview visitor count.</p>
+    </div>
+    <div class="dock-fields">
+      <label for="camera-select">Camera<select id="camera-select"><option value="">System default camera</option></select></label>
+      <label for="threshold">Minimum detection confidence <output id="threshold-value">55%</output><input id="threshold" type="range" min="35" max="85" value="55"></label>
+      <label for="roi">Detection area<select id="roi"><option value="0">Full frame</option><option value="0.1">Central 80%</option><option value="0.2">Central 60%</option></select></label>
+      <p class="hint">Only the count is used; cloud positions do not represent visitor locations.</p>
+    </div>
+  </div>
+
+  <div class="dock-panel output-panel" id="dock-output" role="tabpanel" hidden>
+    <div class="dock-fields">
+      <label for="rain-file">Replace rain audio<input id="rain-file" type="file" accept="audio/*"></label><button id="rain-default">Restore bundled rain</button>
+      <p class="hint">Use an extended display; the projection window follows this page's weather and style. All clouds are procedural; no artwork from the references is reused.</p>
+      <a class="readme" href="README_EN.md" target="_blank">Viewing logic and instructions ↗</a>
+    </div>
+    <div class="log-box"><span class="eyebrow">ACTIVITY LOG</span><ol id="log"></ol></div>
+  </div>
+</section>
+
+<aside class="studio-inspector sky-inspector" aria-label="Visual styles and preview controls">
+<div class="inspector-col">
+  <details open><summary>Visual style<span>STYLE</span></summary><div class="details-body">
+    <div class="style-picker" aria-label="Visual style">
+      <button data-style="0" aria-pressed="true"><span class="swatch atmospheric"></span><span><strong>Physical sky</strong><small>PHYSICAL SKY</small></span></button>
+      <button data-style="1" aria-pressed="false"><span class="swatch pastel"></span><span><strong>Pastel / Oil</strong><small>PASTEL / OIL</small></span></button>
+      <button data-style="2" aria-pressed="false"><span class="swatch watercolour"></span><span><strong>Watercolour</strong><small>WATERCOLOUR</small></span></button>
+    </div>
+    <p id="style-note" class="hint">Atmospheric scattering from the sun position; particle clouds lit by sunlight, skylight and city glow at night.</p>
+  </div></details>
+
+  <details open><summary>Audience and image<span>AUDIENCE</span></summary><div class="details-body">
+    <div class="presence"><label for="test-people">Preview visitors <small id="input-source">Visual preview</small></label><div class="count-readout"><input id="test-people" type="number" min="0" max="20" step="1" value="4"><span>visitors → <strong id="cloud-count">4</strong> clouds</span></div><p id="count-note" class="hint">One cloud per visitor: it fades in on a clear patch of the canopy and drifts with the wind; as it drifts off or dissipates, a new cloud with a different shape forms upwind. It fades out after they leave.</p></div>
+    <label for="sky-shape">Sky shape<select id="sky-shape"><option value="fill" selected>Fill screen</option><option value="circle">Circle</option><option value="square">Square</option></select></label>
+    <label for="brightness" class="slider-label">Sky brightness<input id="brightness" type="range" min="65" max="130" value="100"></label>
+    <label for="rotation" class="slider-label">Canopy orientation <output id="rotation-value">0°</output><input id="rotation" type="range" min="0" max="360" value="0"></label>
+    <label class="check"><input id="reduce" type="checkbox">Reduce cloud drift and water movement</label>
+  </div></details>
+
+  <details open><summary>Rain sound<span>SOUND</span></summary><div class="details-body sound-controls" id="sound-panel">
+    <button id="audio" aria-pressed="false">Enable rain sound</button>
+    <label for="volume">Volume<input id="volume" type="range" min="0" max="100" value="35"><output id="volume-value">35%</output></label>
+    <button id="rain-preview" aria-pressed="false">Preview this count · 6 seconds</button>
+    <p id="rain-density" class="hint">Rain density follows visitor count.</p><p class="hint">Built-in garden rain · <a href="assets/audio/CREDITS.md" target="_blank">barkenov / CC0 ↗</a></p>
+  </div></details>
+</div>
+<div class="inspector-col">
+  <details open id="sky-options"><summary>Atmosphere and grade<span>SKY</span></summary><div class="details-body">
+    <div class="field-pair"><label for="atmosphere">Atmosphere<select id="atmosphere"><option value="melbourne">Melbourne everyday</option><option value="clear">Clear after rain</option><option value="marine">Soft sea haze</option><option value="haze">Hazy warm sun</option><option value="smoke">Bushfire smoke</option><option value="volcanic">Volcanic twilight (approx.)</option></select></label><label for="grade">Colour grade<select id="grade"><option value="natural">Natural</option><option value="warm">Warm film</option><option value="cool">Cool morning</option><option value="dream">Dreamy pink-violet</option><option value="pastel">Soft pastel</option><option value="silver">Black and white</option></select></label></div>
+    <label for="turbidity" class="slider-label">Atmospheric turbidity (1 clean – 40 dense smoke)<input id="turbidity" data-setting="turbidity" type="range" min="1" max="40" step="0.5" value="2.5"></label>
+    <label for="city-glow" class="slider-label">Night city glow (on cloud bases)<input id="city-glow" data-setting="cityGlow" type="range" min="0" max="1" step="0.05" value="0.6"></label>
+    <p class="hint">Atmosphere changes the air itself and colour is still computed by scattering; choosing one moves turbidity to its typical value. The grade sits on top of the final image and combines with any atmosphere.</p>
+  </div></details>
+
+  <details open><summary>Cloud shapes<span>CLOUD</span></summary><div class="details-body">
+    <label for="cloud-form">Cloud form<select id="cloud-form"><option value="cumulus">Billowing cumulus</option><option value="broken">Broken cloudlets</option><option value="layered">Stretched layers</option></select></label>
+  </div></details>
+
+  <details open id="wind-controls"><summary>Wind<span>WIND</span></summary><div class="details-body">
+    <label class="check"><input id="live-wind" type="checkbox" checked>Clouds follow Melbourne's live wind</label>
+    <p id="wind-status" class="hint" role="status" aria-live="polite">Reading Melbourne live wind…</p><p id="wind-values" class="hint"></p>
+    <div class="field-pair"><label for="wind-north">Image north rotation (°)<input id="wind-north" type="number" min="-360" max="360" step="1" value="0"></label><label for="wind-gain">Wind speed visual gain<input id="wind-gain" type="number" min="0.1" max="3" step="0.1" value="1"></label></div>
+    <div class="field-pair"><label for="wind-direction">Manual direction (°)<input id="wind-direction" data-setting="windDirection" type="number" min="0" max="360" step="1" value="25" required></label><label for="wind-speed">Manual drift (×)<input id="wind-speed" data-setting="windSpeed" type="number" min="0" max="3" step="0.1" value="1" required></label></div>
+    <button id="wind-refresh">Refresh live wind</button>
+    <p class="hint">Wind direction is where it blows from, converted for a canopy seen from below (north up, east left); north rotation also turns the sun. 5 m/s equals 1× drift. When off or offline, the manual values apply. Data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> current wind, refreshed every 10 minutes.</p>
+  </div></details>
+</div>
+</aside>
+
+</div></section>
+<section class="studio-view" id="scene-view" role="tabpanel" hidden><div class="studio-grid"><div class="scene-work"><div class="scene-viewport" id="scene-viewport"><div id="concept-host" tabindex="0" aria-label="Concept 3D model; drag to orbit, scroll to zoom, or use arrow and plus/minus keys"></div>
+<span class="concept-label" data-anchor="canopy" hidden>A0 canopy · 841 × 1189 mm</span><span class="concept-label" data-anchor="sky" hidden>Projected sky · synced with projection settings</span><span class="concept-label" data-anchor="water" hidden>Puddle · still water mirrors the canopy</span><span class="concept-label" data-anchor="pebbles" hidden>Mini black pebbles · shape the terrain</span><span class="concept-label" data-anchor="liner" hidden>Pond liner · waterproofs the frame</span><span class="concept-label" data-anchor="frame" hidden>Timber frame · 700 × 700 mm</span><span class="concept-label" data-anchor="bricks" hidden>Bricks · edge finish</span><span class="concept-label" data-anchor="person" hidden>Scale figure ≈ 1.65 m</span>
+<div class="scene-hud"><span>Drag to orbit · Scroll to zoom · Arrow keys and + / − also work</span><button id="scene-expand">Fullscreen 3D</button></div></div></div>
+<aside class="studio-inspector concept-inspector" aria-label="Concept model notes">
+<details open><summary>Views<span>VIEW</span></summary><div class="details-body">
+<div class="concept-views"><button data-concept-view="overview" aria-pressed="true">Overview</button><button data-concept-view="eye" aria-pressed="false">Visitor view</button><button data-concept-view="puddle" aria-pressed="false">Looking down</button><button data-concept-view="layers" aria-pressed="false">Build layers</button></div>
+<label class="check"><input id="concept-layers" type="checkbox">Separate layers</label><label class="check"><input id="concept-labels" type="checkbox" checked>Show labels</label>
+<label for="concept-light">Gallery lighting<select id="concept-light"><option value="dark" selected>Dark · projection reads clearly</option><option value="bright">Bright · projection washes out</option></select></label>
+<label for="canopy-height">Canopy underside height (m)<input id="canopy-height" type="number" min="1.6" max="4" step="0.01" value="2.27"></label><p id="geometry-error" class="error" role="status"></p>
+</div></details>
+<details open><summary>Build list<span>BUILD</span></summary><div class="details-body">
+<table class="build-table"><thead><tr><th>Part</th><th>Size / method</th><th>Basis</th></tr></thead><tbody>
+<tr><td>Canopy</td><td>A0 · 841 × 1189 mm, horizontal, underside receives projection</td><td>Decided</td></tr>
+<tr><td>Canopy height</td><td>2.27 m (previous default, adjustable)</td><td>Assumed</td></tr>
+<tr><td>Timber frame</td><td>700 × 700 mm square</td><td>Decided</td></tr>
+<tr><td>Frame height / board</td><td>150 mm / 35 mm</td><td>Assumed</td></tr>
+<tr><td>Waterproofing</td><td>Pond liner wraps inside, top edge and outside of the frame</td><td>Decided</td></tr>
+<tr><td>Edge</td><td>Bricks placed around as edge finish</td><td>Decided</td></tr>
+<tr><td>Brick size</td><td>230 × 110 × 76 mm, two dry courses, pinwheel bond</td><td>Assumed</td></tr>
+<tr><td>Terrain</td><td>Filled with mini black pebbles forming a shallow hollow</td><td>Decided</td></tr>
+<tr><td>Pebbles / hollow</td><td>About 10–20 mm; centre about 35 mm lower</td><td>Assumed</td></tr>
+<tr><td>Puddle</td><td>Water added; fixed level, simulated about 42 × 41 cm</td><td>Method decided, size simulated</td></tr>
+</tbody></table></div></details>
+<details open><summary>Simulation notes<span>NOTES</span></summary><div class="details-body">
+<p>The puddle outline comes from the pebble terrain and a fixed water level: terrain below the surface shows as water. Water-level change and shoreline retreat are no longer simulated.</p>
+<p>The canopy underside shows the same live sky as Projection settings, drawn as added light. Projector model, position and throw distance are undecided and not modelled.</p>
+<p>Reflection brightness, water colour and pebble form are visual approximations without optical or material calibration. The lighting switch compares how ambient light affects projection legibility.</p>
+<button id="open-projection-settings">Open projection settings →</button>
+</div></details></aside></div></section></main><div id="fatal" role="alert" hidden></div><div id="projection-hint" hidden>Double-click for full screen · Esc to exit</div></body>
+</html>
