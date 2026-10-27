@@ -79,6 +79,8 @@ kbd{font-size:9px;border:1px solid currentColor;padding:0 4px}
 .compass{display:flex;gap:4px}
 .compass button{flex:1;min-height:28px}
 .timing-presets{display:flex;gap:6px;margin-bottom:8px}
+.cloud-starts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cloud-starts button{white-space:normal}
 .timing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
 .timing-grid fieldset{margin:0;padding:6px 8px 8px;border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .timing-grid legend{font-size:10px;padding:0 3px}
@@ -140,6 +142,13 @@ details[open]>summary:after{content:'−'}
 .concept-label::before{content:"";position:absolute;left:-1px;top:50%;width:7px;height:7px;margin:-4px 0 0 -4px;border-radius:50%;background:#efb746}
 .concept-views{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .concept-views button[aria-pressed=true]{background:var(--ink);color:white}
+.concept-views button:last-child:nth-child(odd){grid-column:1/-1}
+.study-subhead{font-size:11px;font-weight:600;margin:10px 0 2px}
+.study-result{font-size:11px;line-height:1.55;background:var(--surface);border-left:3px solid #efb746;padding:6px 8px}
+.study-result strong{font-weight:600}
+.study-heights caption{text-align:left;font-size:10px;color:var(--muted);padding-bottom:3px}
+.study-heights tr.current td{font-weight:600}
+.concept-inspector .study-legend{font-size:10px}
 .concept-inspector p{font-size:11px;color:var(--muted)}
 .build-table{width:100%;border-collapse:collapse;font-size:11px}
 .build-table th,.build-table td{text-align:left;vertical-align:top;padding:5px 4px;border-bottom:1px solid var(--line)}
@@ -180,8 +189,8 @@ details[open]>summary:after{content:'−'}
  .dock-head{flex-wrap:wrap}
  .dock-tabs{overflow-x:auto;max-width:100%}
  .notice{margin-left:0;white-space:normal;text-align:left}
- .reflection-panel,.camera-panel,.output-panel{display:flex;flex-direction:column}
- #reflection-host,.camera-box{height:auto;width:100%}
+ .reflection-panel,.camera-panel,.output-panel,.mapping-panel{display:flex;flex-direction:column}
+ #reflection-host,.camera-box,.mapping-board{height:auto;width:100%}
  .studio-inspector{border-left:0;padding-left:0;border-top:1px solid var(--line)}
  .studio-grid{display:flex;flex-direction:column}
  .scene-viewport{height:65vh}
@@ -193,14 +202,35 @@ body.sky-fullscreen{overflow:hidden}
 body.sky-fullscreen .stage-frame{container-type:normal}
 .stage:fullscreen,.stage.window-fullscreen{width:100vw!important;height:100vh!important;height:100dvh!important;aspect-ratio:auto!important;background:black}
 .stage.window-fullscreen{position:fixed;inset:0;z-index:1000}
-.stage:fullscreen #exit-fullscreen,.stage.window-fullscreen #exit-fullscreen,body.projection #exit-fullscreen{display:block}
+.stage:fullscreen #exit-fullscreen,.stage.window-fullscreen #exit-fullscreen{display:block}
 .scene-viewport:fullscreen,.scene-viewport.window-fullscreen{width:100vw;height:100vh;height:100dvh;min-height:0}
 .scene-viewport.window-fullscreen{position:fixed;inset:0;z-index:1000}
 body.scene-fullscreen{overflow:hidden}
 body.projection{background:black;overflow:hidden}
 body.projection .topbar,body.projection #simulation-controls,body.projection .studio-inspector,body.projection .dock,body.projection #scene-view,body.projection .view-heading{display:none}
 body.projection .stage-frame{container-type:normal}
-body.projection .stage{position:fixed;inset:0;width:100vw;height:100vh;aspect-ratio:auto}
-#projection-hint{position:fixed;bottom:16px;left:16px;color:white;font-size:10px;pointer-events:none;animation:hint 5s forwards}
-@keyframes hint{0%,60%{opacity:.8}100%{opacity:0}}
+body.projection .stage{position:fixed;inset:0;width:100vw;height:100vh;aspect-ratio:auto;background:black}
+/* The projector window shows nothing but the sky: no button, even in full screen, and no pointer. */
+body.projection #exit-fullscreen{display:none!important}
+body.projection,body.projection *{cursor:none!important}
+/* Test grid on the warped sky in the projector window while calibrating: lines, circles and the coloured corner dots. */
+.mapping-grid{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.mapping-grid path,.mapping-grid circle{fill:none;stroke:#fff;stroke-width:2;opacity:.85}
+.mapping-grid circle.dot{stroke:none;opacity:1}
+/* The mapping editor in the control window: the projector image as a box, the warped grid and the numbered corners. */
+.mapping-panel{display:grid;grid-template-columns:auto minmax(220px,560px);gap:8px 16px;justify-content:start;align-items:start}
+.mapping-panel>.mapping-board{grid-row:1/3}.mapping-panel>.dock-fields:last-child{grid-column:2}
+.mapping-board{position:relative;height:var(--dock-media);aspect-ratio:16/9;background:#1d2a30;outline:1px solid var(--line);touch-action:none}
+.mapping-preview{position:absolute;inset:0;width:100%;height:100%}
+.mapping-preview .grid{fill:none;stroke:#ffffff70;stroke-width:3;vector-effect:non-scaling-stroke}
+.mapping-preview .outline{fill:#ffffff18;stroke:#fff;stroke-width:2;vector-effect:non-scaling-stroke}
+.mapping-handle{position:absolute;width:26px;height:26px;min-height:0;margin:-13px 0 0 -13px;padding:0;border:2px solid #fff;border-radius:50%;background:var(--colour);color:#fff;font:700 12px/22px Arial,sans-serif;text-align:center;cursor:grab;touch-action:none}
+.mapping-handle:hover{background:var(--colour);border-color:#fff}
+.mapping-handle:focus-visible,.mapping-handle:focus{outline:3px solid #fff;outline-offset:2px}
+/* Colour by part: the part picker and a colour with its strength per row. */
+.part-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.part-picker button[aria-pressed=true]{background:var(--ink);color:white}
+.colour-row{display:grid;grid-template-columns:76px minmax(0,1fr);gap:10px;align-items:end}
+.colour-row input[type=color]{display:block;width:100%;height:30px;padding:2px;border:1px solid var(--line);border-radius:2px;background:var(--surface)}
 #fatal{position:fixed;inset:20% 15%;z-index:1200;background:#faf8ef;border:1px solid #aa584b;padding:25px;line-height:1.7}
+#geometry-error:empty{display:none}

@@ -85,6 +85,16 @@ const english = {
   "关闭摄像头": "Turn camera off",
   "摄像头": "Camera",
   "系统默认摄像头": "System default camera",
+  "投影映射": "Projection mapping",
+  "完成映射": "Finish mapping",
+  "开始校准": "Start calibrating",
+  "完成校准": "Finish calibrating",
+  "至少启用一段。": "Switch at least one part on.",
+  "请填写有效的时长（2–300 秒）和过渡时间（0–300 秒）。": "Enter valid durations (2–300 s) and transition times (0–300 s).",
+  "纯投影已打开：拖到投影机屏幕后双击全屏，Esc 退出；窗口里没有文字、按钮和鼠标指针。": "Projection opened: move it to the projector screen and double-click for full screen, Esc to leave; the window shows no text, buttons or pointer.",
+  "投影映射 · 已校准": "Projection mapping · set",
+  "先打开纯投影窗口，再校准投影映射。": "Open the projection window first, then set up the projection mapping.",
+  "人数识别模型无法加载": "The visitor detection model could not be loaded",
   "最低识别置信度": "Minimum detection confidence",
   "检测范围": "Detection area",
   "全部画面": "Full frame",
@@ -405,7 +415,9 @@ const english = {
   "最多保存 50 个预设。": "Up to 50 presets can be saved.",
   "预设已删除。": "Preset deleted.",
   "启动默认已更新。": "Startup default updated.",
-  "已载入内置默认参数。": "Factory parameters loaded."
+  "已载入内置默认参数。": "Factory parameters loaded.",
+  "天幕宽深比需在 1:4 到 4:1 之间。": "The canopy width-to-depth ratio must be between 1:4 and 4:1.",
+  "水面需比碎石区每边小至少 1 cm。": "Keep the water at least 1 cm inside the gravel area on each side."
 };
 
 const rules = [

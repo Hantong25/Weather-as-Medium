@@ -3,22 +3,22 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ecebe5"><link rel="icon" href="data:,">
-<title>Ephemeral — 天空工作室 · CONCEPT 3D 2026.10.19.2</title><link rel="stylesheet" href="style.css?v=2026.10.19.2"><script src="vendor/p5.min.js"></script><script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script><script type="module" src="sketch.js?v=2026.10.19.2"></script>
+<title>Accumulus — 天空工作室 · CONCEPT 3D 2026.10.27.1</title><link rel="stylesheet" href="style.css?v=2026.10.27.1"><script src="vendor/p5.min.js"></script><script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script><script type="module" src="sketch.js?v=2026.10.27.1"></script>
 </head>
 <body>
 <header class="topbar">
-  <a class="wordmark" href="./">EPHEMERAL<span>WEATHER REPORT</span></a>
+  <a class="wordmark" href="./">ACCUMULUS<span>FOR EPHEMERAL</span></a>
   <nav class="view-tabs" aria-label="工作区"><button data-view="sky" aria-selected="true" role="tab" aria-controls="sky-view">投影设定</button><button data-view="scene" aria-selected="false" role="tab" aria-controls="scene-view">概念 3D 展示</button></nav>
   <span id="phase-status" class="phase-status"></span>
-  <div class="top-actions"><span class="release-banner" role="status">CONCEPT 3D · 2026.10.19.2</span><a id="language-switch" href="en.html" lang="en">English</a><button id="project">打开纯投影 ↗</button><button id="fullscreen" aria-pressed="false">全屏天空</button></div>
+  <div class="top-actions"><span class="release-banner" role="status">CONCEPT 3D · 2026.10.27.1</span><a id="language-switch" href="en.html" lang="en">English</a><button id="project">打开纯投影 ↗</button><button id="mapping" aria-pressed="false">投影映射</button><button id="fullscreen" aria-pressed="false">全屏天空</button></div>
 </header>
 <section id="simulation-controls" aria-label="模拟天气进度">
   <div class="playback">
-    <div class="clock"><strong id="clock">00.0</strong><span id="cycle-duration">60 秒 / 一轮 · 自动循环</span></div>
+    <div class="clock"><strong id="clock">00.0</strong><span id="cycle-duration">240 秒 / 一轮 · 自动循环</span></div>
     <button id="play" class="primary" aria-pressed="false">暂停</button><button id="restart">重播</button>
     <div class="track">
-      <input id="scrub" type="range" min="0" max="85" step="0.1" value="0" aria-label="预览天气周期的时间">
-      <div class="timeline" aria-label="跳转到天气阶段"><button data-time="3" style="flex:8"><span>01</span> 日出<small>0–8 s</small><i></i></button><button data-time="10" style="flex:4"><span>02</span> 晴天<small>8–12 s</small><i></i></button><button data-time="16" style="flex:10"><span>03</span> 日落<small>12–22 s</small><i></i></button><button data-time="23.5" style="flex:3"><span>04</span> 夜晚阴天<small>22–25 s</small><i></i></button></div>
+      <input id="scrub" type="range" min="0" max="240" step="0.1" value="0" aria-label="预览天气周期的时间">
+      <div class="timeline" aria-label="跳转到天气阶段"><button data-time="30" style="flex:60"><span>01</span> 早晨<small>0–60 s</small><i></i></button><button data-time="90" style="flex:60"><span>02</span> 白天<small>60–120 s</small><i></i></button><button data-time="150" style="flex:60"><span>03</span> 晚霞<small>120–180 s</small><i></i></button><button data-time="210" style="flex:60"><span>04</span> 星空夜晚<small>180–240 s</small><i></i></button></div>
     </div>
     <button id="stop" class="stop">停止 <kbd>■</kbd></button><button id="recover" hidden>重新开始</button>
   </div>
@@ -33,7 +33,7 @@
 
 <section class="dock" aria-label="时长、预设、倒影、摄像头与输出">
   <div class="dock-head">
-    <div class="dock-tabs" role="tablist"><button role="tab" data-dock="reflection" aria-selected="true" aria-controls="dock-reflection">倒影检查</button><button role="tab" data-dock="timing" aria-selected="false" aria-controls="dock-timing">时长与速度</button><button role="tab" data-dock="presets" aria-selected="false" aria-controls="dock-presets">参数预设</button><button role="tab" data-dock="camera" aria-selected="false" aria-controls="dock-camera">摄像头</button><button role="tab" data-dock="output" aria-selected="false" aria-controls="dock-output">素材与记录</button></div>
+    <div class="dock-tabs" role="tablist"><button role="tab" data-dock="reflection" aria-selected="true" aria-controls="dock-reflection">倒影检查</button><button role="tab" data-dock="timing" aria-selected="false" aria-controls="dock-timing">时长与速度</button><button role="tab" data-dock="presets" aria-selected="false" aria-controls="dock-presets">参数预设</button><button role="tab" data-dock="camera" aria-selected="false" aria-controls="dock-camera">摄像头</button><button role="tab" data-dock="mapping" aria-selected="false" aria-controls="dock-mapping">投影映射</button><button role="tab" data-dock="output" aria-selected="false" aria-controls="dock-output">素材与记录</button></div>
     <p id="notice" class="notice" role="status" aria-live="polite">默认以 4 人预演。切换风格会保留同一时刻，便于比较。</p>
   </div>
 
@@ -41,17 +41,17 @@
     <div id="reflection-host"></div>
     <div class="dock-fields">
       <div class="view-heading"><span>02 / 观众的水面视角</span><span id="angle-value">0°</span></div>
-      <label class="angle-label" for="angle">绕水洼移动<input id="angle" type="range" min="0" max="360" step="1" value="0"></label>
+      <label class="angle-label" for="angle">绕水塘移动<input id="angle" type="range" min="0" max="360" step="1" value="0"></label>
       <div class="compass" aria-label="观看方位"><button data-angle="0" aria-label="从零度方向观看">0°</button><button data-angle="90" aria-label="从九十度方向观看">90°</button><button data-angle="180" aria-label="从一百八十度方向观看">180°</button><button data-angle="270" aria-label="从二百七十度方向观看">270°</button></div>
-      <p id="coverage" class="hint">站在水洼中心约 0.6 m、眼高 1.62 m 处低头看到的倒影。亮度为视觉近似。</p>
+      <p id="coverage" class="hint">眼睛离水塘中心 0.65 m、眼高 1.62 m 处低头看到的倒影。亮度为视觉近似。</p>
     </div>
   </div>
 
   <div class="dock-panel" id="dock-timing" role="tabpanel" hidden>
-    <div class="timing-presets"><button data-timing="slow">缓慢 · 660 秒</button><button data-timing="standard" aria-pressed="true">自然 · 60 秒</button><button data-timing="quick">快速 · 32 秒</button></div>
-    <div class="timing-grid"><fieldset><legend>01 / 日出</legend><label for="stage-duration-0">时长（秒）<input id="stage-duration-0" data-duration="0" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-0">云边变化（倍）<input id="stage-rate-0" data-rate="0" type="number" min="0.1" max="3" step="0.1" value="0.7" required></label></fieldset><fieldset><legend>02 / 晴天</legend><label for="stage-duration-1">时长（秒）<input id="stage-duration-1" data-duration="1" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-1">云边变化（倍）<input id="stage-rate-1" data-rate="1" type="number" min="0.1" max="3" step="0.1" value="0.8" required></label></fieldset><fieldset><legend>03 / 日落</legend><label for="stage-duration-2">时长（秒）<input id="stage-duration-2" data-duration="2" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-2">云边变化（倍）<input id="stage-rate-2" data-rate="2" type="number" min="0.1" max="3" step="0.1" value="0.9" required></label></fieldset><fieldset><legend>04 / 夜晚阴天</legend><label for="stage-duration-3">时长（秒）<input id="stage-duration-3" data-duration="3" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-3">云边变化（倍）<input id="stage-rate-3" data-rate="3" type="number" min="0.1" max="3" step="0.1" value="0.6" required></label></fieldset></div>
-    <div class="timing-actions"><label for="rate-blend">速度过渡缓冲（秒）<input id="rate-blend" type="number" min="0.5" max="15" step="0.5" value="5"></label><button id="timing-apply">应用时长并重播</button><p id="timing-error" role="status"></p></div>
-    <p class="hint">日出 → 晴天 → 日落 → 夜晚阴天循环。太阳沿墨尔本十月真实轨迹连续移动，时长只决定各段经历多久；夜里云层聚拢并有雨声，黎明前散开。</p>
+    <div class="timing-presets"><button data-timing="slow">缓慢 · 660 秒</button><button data-timing="standard" aria-pressed="true">自然 · 240 秒</button><button data-timing="quick">快速 · 60 秒</button></div>
+    <div class="timing-grid"><fieldset><legend>01 / 早晨</legend><label class="check"><input data-part-on="0" type="checkbox" checked>启用</label><label for="stage-duration-0">时长（秒）<input id="stage-duration-0" data-duration="0" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-0">过渡起点：结束前（秒）<input id="edge-out-0" data-edge-out="0" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-0">过渡终点：下一段开始后（秒）<input id="edge-in-0" data-edge-in="0" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset><fieldset><legend>02 / 白天</legend><label class="check"><input data-part-on="1" type="checkbox" checked>启用</label><label for="stage-duration-1">时长（秒）<input id="stage-duration-1" data-duration="1" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-1">过渡起点：结束前（秒）<input id="edge-out-1" data-edge-out="1" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-1">过渡终点：下一段开始后（秒）<input id="edge-in-1" data-edge-in="1" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset><fieldset><legend>03 / 晚霞</legend><label class="check"><input data-part-on="2" type="checkbox" checked>启用</label><label for="stage-duration-2">时长（秒）<input id="stage-duration-2" data-duration="2" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-2">过渡起点：结束前（秒）<input id="edge-out-2" data-edge-out="2" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-2">过渡终点：下一段开始后（秒）<input id="edge-in-2" data-edge-in="2" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset><fieldset><legend>04 / 星空夜晚</legend><label class="check"><input data-part-on="3" type="checkbox" checked>启用</label><label for="stage-duration-3">时长（秒）<input id="stage-duration-3" data-duration="3" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-3">过渡起点：结束前（秒）<input id="edge-out-3" data-edge-out="3" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-3">过渡终点：下一段开始后（秒）<input id="edge-in-3" data-edge-in="3" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset></div>
+    <div class="timing-actions"><button id="timing-apply">应用时长并重播</button><p id="timing-error" role="status"></p></div>
+    <p class="hint">早晨 → 白天 → 晚霞 → 星空夜晚循环，默认每段 60 秒。太阳沿墨尔本十月的真实轨迹移动，每段取其中一截：早晨是日出前后，白天是上午到下午，晚霞是日落前后，夜晚是星空和月光照亮的云。过渡从这一段「结束前」若干秒开始，到下一段开始后若干秒结束；下一段紧接在太阳轨迹上时太阳平滑走过去，中间有段落关闭时两段天空交叉淡化。取消勾选即关闭一段（至少保留一段），勾选立即生效；时长和过渡改完点「应用时长并重播」。快速、自然、缓慢只改时长和过渡，不改启用状态。云的漂移和形变速度在「风与运动」里设定，全程恒定。</p>
   </div>
 
   <div class="dock-panel parameter-presets" id="dock-presets" role="tabpanel" hidden>
@@ -72,16 +72,27 @@
     </div>
     <div class="dock-fields">
       <label for="camera-select">摄像头<select id="camera-select"><option value="">系统默认摄像头</option></select></label>
-      <label for="threshold">最低识别置信度 <output id="threshold-value">55%</output><input id="threshold" type="range" min="35" max="85" value="55"></label>
+      <label for="threshold">最低识别置信度 <output id="threshold-value">50%</output><input id="threshold" type="range" min="35" max="85" value="50"></label>
       <label for="roi">检测范围<select id="roi"><option value="0">全部画面</option><option value="0.1">中央 80%</option><option value="0.2">中央 60%</option></select></label>
-      <p class="hint">只读取人数，云的位置不代表观众方位。</p>
+      <label for="count-hold">人数确认时间 <output id="count-hold-value">3 s</output><input id="count-hold" type="range" min="1" max="10" step="1" value="3"></label>
+      <p class="hint">每秒检测一次。人数取最近一段时间（人数确认时间）检测结果的中位数，单帧漏检或误检不会让云闪现，人数变化约在这段时间过半后生效，之后云按「云出现 / 消失时间」渐变。只读取人数，云的位置不代表观众方位。识别用 YOLOX-tiny 人体模型（正面、背面、侧面都能识别），在后台线程运行；画面里的人物画、海报也可能被算作观众，可用「检测范围」排除。插上 USB 摄像头后会自动出现在列表里。</p>
     </div>
+  </div>
+
+  <div class="dock-panel mapping-panel" id="dock-mapping" role="tabpanel" hidden>
+    <div id="mapping-board" class="mapping-board" role="group" aria-label="投影窗口示意：拖动四个角"></div>
+    <div class="dock-fields">
+      <div class="button-row"><button id="mapping-edit" aria-pressed="false">开始校准</button><button id="mapping-reset">四角复位</button><button id="mapping-off">关闭映射</button></div>
+      <p id="mapping-status" role="status" aria-live="polite"></p>
+      <div class="field-pair"><label for="mapping-width">天幕宽（m）<input id="mapping-width" type="number" min="0.2" max="30" step="0.01" value="0.84"></label><label for="mapping-depth">天幕深（m）<input id="mapping-depth" type="number" min="0.2" max="30" step="0.01" value="1.19"></label></div>
+    </div>
+    <div class="dock-fields"><p class="hint">左框代表投影机画面。先把纯投影窗口拖到投影机屏幕上双击全屏，再点「开始校准」：天幕上出现网格和四个色点（1 红、2 黄、3 绿、4 蓝），对应左框里的 1–4 号角。拖动各角，或点选后用方向键微调（每次 1 个投影像素，Shift 为 10），直到四个色点落在天幕四角、网格方正、圆是正圆。斜投造成的梯形变形就由这一步反向抵消：画面先按天幕的宽深比画好，再整体透视变形贴到四角，所以天幕上的云形状是正的。宽、深要填天幕实际尺寸（正方形天幕两者相同），否则画面会被拉伸。四角自动保存，重启后保留。</p></div>
   </div>
 
   <div class="dock-panel output-panel" id="dock-output" role="tabpanel" hidden>
     <div class="dock-fields">
       <label for="rain-file">替换雨声<input id="rain-file" type="file" accept="audio/*"></label><button id="rain-default">恢复内置雨声</button>
-      <p class="hint">显示器用扩展模式；纯投影窗口与本页同步天气和风格。云层均由程序生成，没有复用参考图中的作品。</p>
+      <p class="hint">显示器用扩展模式；纯投影窗口与本页同步天气和风格。投影机斜投时，在「投影映射」标签里把四角对到天幕四角。纯投影窗口里没有文字、按钮和鼠标指针：双击全屏，Esc 退出。云层均由程序生成，没有复用参考图中的作品。</p>
       <a class="readme" href="README.md" target="_blank">观看逻辑与使用说明 ↗</a>
     </div>
     <div class="log-box"><span class="eyebrow">运行记录 · LOG</span><ol id="log"></ol></div>
@@ -97,74 +108,138 @@
       <button data-style="2" aria-pressed="false"><span class="swatch watercolour"></span><span><strong>水彩纸本</strong><small>WATERCOLOUR</small></span></button>
     </div>
     <p id="style-note" class="hint">按太阳位置计算大气散射；粒子云团由阳光、天光和城市夜光照亮。</p>
+    <label for="style-mix" class="slider-label">风格强度（粉彩与水彩的笔触、纸纹） <output id="style-mix-value">100%</output><input id="style-mix" data-setting="styleMix" type="range" min="0" max="1" step="0.05" value="1"></label>
   </div></details>
 
   <details open><summary>观众与画面<span>AUDIENCE</span></summary><div class="details-body">
-    <div class="presence"><label for="test-people">预演人数 <small id="input-source">视觉预演</small></label><div class="count-readout"><input id="test-people" type="number" min="0" max="20" step="1" value="4"><span>人 → <strong id="cloud-count">4</strong> 朵云</span></div><p id="count-note" class="hint">一人对应一朵云：到来时在天幕的空处渐显，随风飘过；飘出天幕或消散时，上风处会生成一朵新形状的云。离开后对应的云渐隐。</p></div>
+    <div class="presence"><label for="test-people">预演人数 <small id="input-source">视觉预演</small></label><div class="count-readout"><input id="test-people" type="number" min="0" max="20" step="1" value="4"><span>人 → <strong id="cloud-count">4</strong> 朵云</span></div><p id="count-note" class="hint">一人对应一朵云：到来时在天幕的空处渐显，随风飘过，完整飘出画面；它开始飘出时，一朵新形状的云从对侧（上风处）飘入。离开后对应的云渐隐。无风时云约一两分钟后就地消散，再生成新云；形成和消散也按下面两个时间。</p></div>
+    <label for="cloud-appear" class="slider-label">云出现时间（人到来后渐显） <output id="cloud-appear-value">8 s</output><input id="cloud-appear" data-setting="cloudAppear" type="range" min="2" max="60" step="1" value="8"></label>
+    <label for="cloud-vanish" class="slider-label">云消失时间（人离开后渐隐） <output id="cloud-vanish-value">10 s</output><input id="cloud-vanish" data-setting="cloudVanish" type="range" min="2" max="60" step="1" value="10"></label>
     <label for="sky-shape">天空形状<select id="sky-shape"><option value="fill" selected>铺满屏幕</option><option value="circle">圆形</option><option value="square">方形</option></select></label>
     <label for="brightness" class="slider-label">天光亮度<input id="brightness" type="range" min="65" max="130" value="100"></label>
-    <label for="rotation" class="slider-label">天幕方位 <output id="rotation-value">0°</output><input id="rotation" type="range" min="0" max="360" value="0"></label>
+    <label for="rotation" class="slider-label">天幕朝向（太阳、风和云一起转） <output id="rotation-value">0°</output><input id="rotation" type="range" min="0" max="360" value="0"></label>
+    <p class="hint">0° 时画面上方为北、东在左（仰视）。在展厅里转到投影中的天空与真实方位一致：早晨东侧亮，晚霞在西侧，正午太阳偏北。</p>
     <label class="check"><input id="reduce" type="checkbox">减少云层漂移与水面扰动</label>
+  </div></details>
+
+  <details open id="output-region"><summary>云的区域<span>REGION</span></summary><div class="details-body">
+    <label for="region-x" class="slider-label">区域中心 · 左 → 右 <output id="region-x-value">50%</output><input id="region-x" data-setting="regionX" type="range" min="0" max="1" step="0.01" value="0.5"></label>
+    <label for="region-y" class="slider-label">区域中心 · 上 → 下 <output id="region-y-value">50%</output><input id="region-y" data-setting="regionY" type="range" min="0" max="1" step="0.01" value="0.5"></label>
+    <label for="region-w" class="slider-label">区域宽 <output id="region-w-value">100%</output><input id="region-w" data-setting="regionW" type="range" min="0.1" max="1" step="0.01" value="1"></label>
+    <label for="region-h" class="slider-label">区域高 <output id="region-h-value">100%</output><input id="region-h" data-setting="regionH" type="range" min="0.1" max="1" step="0.01" value="1"></label>
+    <label for="feather" class="slider-label">边缘羽化（飘入、飘出时渐变的距离，占区域短边） <output id="feather-value">30%</output><input id="feather" data-setting="feather" type="range" min="0" max="0.5" step="0.01" value="0.3"></label>
+    <button id="region-reset">云铺满整个画面</button>
+    <p class="hint">大云只在这块区域里生成（按画幅比例设定），并按区域大小变小、集中；区域外的天空和背景薄云保持不变，整体仍是一片完整的天空，不画边框。新云从区域上风侧外渐渐凝结飘入，飘出下风侧后渐渐消散，「边缘羽化」设定这段距离；区域边缘与画面边缘重合时，云完整飘出画面后才消散。数值随参数预设保存，纯投影窗口和 3D 天幕同步。</p>
   </div></details>
 
   <details open><summary>雨声<span>SOUND</span></summary><div class="details-body sound-controls" id="sound-panel">
     <button id="audio" aria-pressed="false">启用雨声</button>
     <label for="volume">音量<input id="volume" type="range" min="0" max="100" value="35"><output id="volume-value">35%</output></label>
     <button id="rain-preview" aria-pressed="false">试听当前人数 · 6 秒</button>
-    <p id="rain-density" class="hint">雨声密度随人数变化。</p><p class="hint">已内置花园雨声 · <a href="assets/audio/CREDITS.md" target="_blank">barkenov / CC0 ↗</a></p>
+    <p id="rain-density" class="hint">雨声密度随人数变化。循环里已没有阴雨夜，雨声只在试听时播放。</p><p class="hint">已内置花园雨声 · <a href="assets/audio/CREDITS.md" target="_blank">barkenov / CC0 ↗</a></p>
   </div></details>
 </div>
 <div class="inspector-col">
   <details open id="sky-options"><summary>大气与调色<span>SKY</span></summary><div class="details-body">
     <div class="field-pair"><label for="atmosphere">大气类型<select id="atmosphere"><option value="melbourne">墨尔本日常</option><option value="clear">雨后清透</option><option value="marine">海雾柔光</option><option value="haze">雾霾暖阳</option><option value="smoke">山火烟尘</option><option value="volcanic">火山暮光（近似）</option></select></label><label for="grade">调色<select id="grade"><option value="natural">自然</option><option value="warm">暖调胶片</option><option value="cool">冷调清晨</option><option value="dream">梦幻粉紫</option><option value="pastel">柔和粉彩</option><option value="silver">黑白银盐</option></select></label></div>
+    <label for="grade-mix" class="slider-label">调色强度 <output id="grade-mix-value">100%</output><input id="grade-mix" data-setting="gradeMix" type="range" min="0" max="1" step="0.05" value="1"></label>
     <label for="turbidity" class="slider-label">大气浑浊度（1 洁净 – 40 浓烟）<input id="turbidity" data-setting="turbidity" type="range" min="1" max="40" step="0.5" value="2.5"></label>
     <label for="city-glow" class="slider-label">夜间城市光（云底反射）<input id="city-glow" data-setting="cityGlow" type="range" min="0" max="1" step="0.05" value="0.6"></label>
-    <p class="hint">大气类型改变空气成分，颜色仍由散射计算，选择后浑浊度跳到典型值；调色叠加在最终画面上，可与任一类型组合。</p>
+    <label for="moonlight" class="slider-label">夜间月光（照亮云的一侧） <output id="moonlight-value">×1.00</output><input id="moonlight" data-setting="moonlight" type="range" min="0" max="2" step="0.05" value="1"></label>
+    <p class="hint">大气类型改变空气成分，颜色仍由散射计算，选择后浑浊度跳到典型值；调色叠加在最终画面上，可与任一类型组合，强度 0 即不调色。夜晚是晴朗星空，满月在太阳对面照亮云。</p>
   </div></details>
 
-  <details open><summary>云形<span>CLOUD</span></summary><div class="details-body">
+  <details open id="part-colours"><summary>分段颜色<span>COLOUR</span></summary><div class="details-body">
+    <div class="part-picker" role="group" aria-label="选择循环段"><button data-part="0" aria-pressed="true">早晨</button><button data-part="1" aria-pressed="false">白天</button><button data-part="2" aria-pressed="false">晚霞</button><button data-part="3" aria-pressed="false">夜晚</button></div>
+    <div class="colour-row"><label for="part-sky">天空<input id="part-sky" data-hue="sky" type="color" value="#7aa6ff"></label><label for="part-sky-mix" class="slider-label">强度 <output id="part-sky-mix-value">0%</output><input id="part-sky-mix" data-part-setting="skyMix" type="range" min="0" max="1" step="0.05" value="0"></label></div><div class="colour-row"><label for="part-light">云亮部<input id="part-light" data-hue="light" type="color" value="#ffc58f"></label><label for="part-light-mix" class="slider-label">强度 <output id="part-light-mix-value">0%</output><input id="part-light-mix" data-part-setting="lightMix" type="range" min="0" max="1" step="0.05" value="0"></label></div><div class="colour-row"><label for="part-shade">云暗部<input id="part-shade" data-hue="shade" type="color" value="#7f8fc4"></label><label for="part-shade-mix" class="slider-label">强度 <output id="part-shade-mix-value">0%</output><input id="part-shade-mix" data-part-setting="shadeMix" type="range" min="0" max="1" step="0.05" value="0"></label></div>
+    <label for="part-clear" class="slider-label">云的透明度 <output id="part-clear-value">0%</output><input id="part-clear" data-part-setting="clear" type="range" min="0" max="0.9" step="0.05" value="0"></label>
+    <label for="part-saturation" class="slider-label">饱和度 <output id="part-saturation-value">×1.00</output><input id="part-saturation" data-part-setting="saturation" type="range" min="0" max="2" step="0.05" value="1"></label>
+    <label for="part-stars" class="slider-label">星星亮度 <output id="part-stars-value">×1.00</output><input id="part-stars" data-part-setting="stars" type="range" min="0" max="3" step="0.05" value="1"></label>
+    <button id="part-reset">恢复此段默认</button>
+    <p class="hint">先选一段，再改这一段：天空、云的亮部（阳光或月光照到的一面）和暗部（天光与城市光）各自朝所选颜色偏移，亮度不变；强度为 0 时保持物理计算的颜色，选颜色时强度会自动设为 50%。透明度让天空透过云层。过渡期间相邻两段的设置平滑混合。星星只在夜晚出现。随参数预设保存，纯投影窗口同步。</p>
+  </div></details>
+
+  <details open id="cloud-look"><summary>云形与质感<span>CLOUD</span></summary><div class="details-body">
     <label for="cloud-form">云形倾向<select id="cloud-form"><option value="cumulus">松散积云</option><option value="broken">破碎小云</option><option value="layered">舒展层云</option></select></label>
+    <div class="cloud-starts" role="group" aria-label="质感起点"><button data-cloud-start="soft" aria-pressed="true">柔和 · 默认</button><button data-cloud-start="ragged" aria-pressed="false">丰富边缘</button><button data-cloud-start="dense" aria-pressed="false">浓厚积云</button><button data-cloud-start="thin" aria-pressed="false">轻薄云丝</button></div>
+    <div class="preset-row cloud-presets"><label for="cloud-preset-list">已存云参数<select id="cloud-preset-list"></select></label><button id="cloud-preset-load" disabled>载入</button><button id="cloud-preset-delete" disabled>删除</button></div>
+    <div class="preset-row cloud-presets"><label for="cloud-preset-name">名称<input id="cloud-preset-name" type="text" maxlength="60"></label><button id="cloud-preset-save">保存当前云参数</button></div>
+    <p id="cloud-preset-status" class="hint" role="status" aria-live="polite"></p>
+    <p class="eyebrow">形状 · SHAPE</p>
+    <label for="cloud-size" class="slider-label">云团大小 <output id="cloud-size-value">1.00</output><input id="cloud-size" data-setting="cloudSize" type="range" min="0.6" max="1.6" step="0.05" value="1"></label>
+    <label for="cloud-warp" class="slider-label">轮廓扭曲 <output id="cloud-warp-value">1.00</output><input id="cloud-warp" data-setting="cloudWarp" type="range" min="0" max="3" step="0.05" value="1"></label>
+    <label for="cloud-scale" class="slider-label">纹理尺度（大块 → 细碎） <output id="cloud-scale-value">1.00</output><input id="cloud-scale" data-setting="cloudScale" type="range" min="0.5" max="2" step="0.05" value="1"></label>
+    <label for="cloud-billow" class="slider-label">团块感 <output id="cloud-billow-value">0.00</output><input id="cloud-billow" data-setting="cloudBillow" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label for="cloud-lean" class="slider-label">立体纵深（上层倾斜） <output id="cloud-lean-value">1.00</output><input id="cloud-lean" data-setting="cloudLean" type="range" min="0" max="2" step="0.05" value="1"></label>
+    <p class="eyebrow">厚度 · THICKNESS</p>
+    <label for="cloud-density" class="slider-label">云的浓度 <output id="cloud-density-value">1.00</output><input id="cloud-density" data-setting="cloudDensity" type="range" min="0.3" max="2.5" step="0.05" value="1"></label>
+    <label for="cloud-shadow" class="slider-label">背光暗部（云芯明暗） <output id="cloud-shadow-value">1.00</output><input id="cloud-shadow" data-setting="cloudShadow" type="range" min="0" max="3" step="0.05" value="1"></label>
+    <p class="eyebrow">边缘 · EDGE</p>
+    <label for="cloud-detail" class="slider-label">边缘碎度 <output id="cloud-detail-value">1.00</output><input id="cloud-detail" data-setting="cloudDetail" type="range" min="0" max="2.5" step="0.05" value="1"></label>
+    <label for="cloud-erosion" class="slider-label">边缘侵蚀 <output id="cloud-erosion-value">0.00</output><input id="cloud-erosion" data-setting="cloudErosion" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label for="cloud-softness" class="slider-label">边缘柔和（硬 → 软） <output id="cloud-softness-value">1.00</output><input id="cloud-softness" data-setting="cloudSoftness" type="range" min="0.1" max="2" step="0.05" value="1"></label>
+    <label for="cloud-silver" class="slider-label">逆光银边 <output id="cloud-silver-value">0.00</output><input id="cloud-silver" data-setting="cloudSilver" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label for="cloud-merge" class="slider-label">云团粘连（相邻云拉丝） <output id="cloud-merge-value">1.00</output><input id="cloud-merge" data-setting="cloudMerge" type="range" min="0" max="1" step="0.05" value="1"></label>
+    <label for="cloud-bump" class="slider-label">边缘凹凸幅度 <output id="cloud-bump-value">0.00</output><input id="cloud-bump" data-setting="cloudBump" type="range" min="0" max="3" step="0.05" value="0"></label>
+    <p class="hint">“柔和 · 默认”即 10.19.2 的云；另外三个是起点，选后可继续拖动。粘连调低时相邻的云各自成团，不再被拉成丝；边缘凹凸让轮廓出现圆润的鼓包和凹口。调好的云形和 13 项数值可单独存为云参数（存在本地预设文件里），也随参数预设保存；纯投影窗口同步。团块感、边缘侵蚀、碎度大于 1，以及放大或变薄的云，会多占显卡。</p>
   </div></details>
 
-  <details open id="wind-controls"><summary>风<span>WIND</span></summary><div class="details-body">
-    <label class="check"><input id="live-wind" type="checkbox" checked>云层随墨尔本实时风移动</label>
+  <details open id="wind-controls"><summary>风与运动<span>WIND</span></summary><div class="details-body">
+    <label class="check"><input id="live-wind" type="checkbox" checked>云层方向随墨尔本实时风</label>
     <p id="wind-status" class="hint" role="status" aria-live="polite">正在读取墨尔本实时风…</p><p id="wind-values" class="hint"></p>
-    <div class="field-pair"><label for="wind-north">画面北向旋转（°）<input id="wind-north" type="number" min="-360" max="360" step="1" value="0"></label><label for="wind-gain">风速视觉倍率<input id="wind-gain" type="number" min="0.1" max="3" step="0.1" value="1"></label></div>
-    <div class="field-pair"><label for="wind-direction">手动风向（°）<input id="wind-direction" data-setting="windDirection" type="number" min="0" max="360" step="1" value="25" required></label><label for="wind-speed">手动漂移（倍）<input id="wind-speed" data-setting="windSpeed" type="number" min="0" max="3" step="0.1" value="1" required></label></div>
+    <div class="field-pair"><label for="wind-direction">手动风向（°）<input id="wind-direction" data-setting="windDirection" type="number" min="0" max="360" step="1" value="25" required></label><label for="wind-speed">漂移速度（倍）<input id="wind-speed" data-setting="windSpeed" type="number" min="0" max="3" step="0.1" value="1" required></label></div>
+    <label for="morph-rate">形变速度（倍）<input id="morph-rate" type="number" min="0.1" max="3" step="0.05" value="0.7" required></label>
     <button id="wind-refresh">立即刷新实时风</button>
-    <p class="hint">风向为气象“来向”，按仰视天幕换算为流向（上方为北时东在左）；北向旋转同时作用于太阳。5 m/s 对应 1 倍漂移。关闭或断网时用手动风向。数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> 当前风，每 10 分钟刷新。</p>
+    <p class="hint">云以恒定速度漂移和变形，不随天气阶段或实时风速忽快忽慢；实时风只决定方向，风向改变时约半分钟内平稳转过去。风向为气象“来向”，按仰视天幕换算为流向（上方为北、东在左），与太阳一起随「天幕朝向」旋转。1 倍漂移约 100 秒横穿画面短边。关闭或断网时用手动风向。数据：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> 当前风，每 10 分钟刷新。</p>
   </div></details>
 </div>
 </aside>
 
 </div></section>
 <section class="studio-view" id="scene-view" role="tabpanel" hidden><div class="studio-grid"><div class="scene-work"><div class="scene-viewport" id="scene-viewport"><div id="concept-host" tabindex="0" aria-label="概念 3D 模型；拖动旋转、滚轮缩放，或用方向键与加减键操作"></div>
-<span class="concept-label" data-anchor="canopy" hidden>A0 天幕 · 841 × 1189 mm</span><span class="concept-label" data-anchor="sky" hidden>投影天空 · 与投影设定同步</span><span class="concept-label" data-anchor="water" hidden>水洼 · 静止水面倒映天幕</span><span class="concept-label" data-anchor="pebbles" hidden>迷你黑色石块 · 堆出地形</span><span class="concept-label" data-anchor="liner" hidden>Pond liner · 包裹框架防水</span><span class="concept-label" data-anchor="frame" hidden>木质框架 · 700 × 700 mm</span><span class="concept-label" data-anchor="bricks" hidden>砖块 · 边缘装饰</span><span class="concept-label" data-anchor="person" hidden>人体比例参考 ≈ 1.65 m</span>
+<span class="concept-label" data-anchor="canopy" id="canopy-label" hidden>天幕 · 841 × 1189 mm</span><span class="concept-label" data-anchor="sky" hidden>投影天空 · 与投影设定同步</span><span class="concept-label" data-anchor="water" hidden>水面 · 碎石区中间一块，倒映天幕</span><span class="concept-label" data-anchor="pebbles" hidden>黑色碎石 · 水面四周露出</span><span class="concept-label" data-anchor="liner" hidden>Pond liner · 碎石下防水（假设）</span><span class="concept-label" data-anchor="frame" hidden>黑色木框 · 1000 × 1000 mm</span><span class="concept-label" data-anchor="bricks" hidden>灰色铺路砖 · 两圈</span><span class="concept-label" data-anchor="person" hidden>倒影检查的观众</span>
 <div class="scene-hud"><span>拖动旋转 · 滚轮缩放 · 方向键与 + / − 亦可</span><button id="scene-expand">全屏 3D</button></div></div></div>
 <aside class="studio-inspector concept-inspector" aria-label="概念模型说明">
 <details open><summary>观看视角<span>VIEW</span></summary><div class="details-body">
-<div class="concept-views"><button data-concept-view="overview" aria-pressed="true">整体</button><button data-concept-view="eye" aria-pressed="false">观众视角</button><button data-concept-view="puddle" aria-pressed="false">水洼俯看</button><button data-concept-view="layers" aria-pressed="false">分层构造</button></div>
+<div class="concept-views"><button data-concept-view="overview" aria-pressed="true">整体</button><button data-concept-view="eye" aria-pressed="false">观众视角</button><button data-concept-view="puddle" aria-pressed="false">水塘俯看</button><button data-concept-view="layers" aria-pressed="false">分层构造</button><button data-concept-view="plan" aria-pressed="false">平面俯视 · 看天幕覆盖</button></div>
 <label class="check"><input id="concept-layers" type="checkbox">分层展开</label><label class="check"><input id="concept-labels" type="checkbox" checked>显示标注</label>
 <label for="concept-light">展厅照明<select id="concept-light"><option value="dark" selected>暗场 · 投影清晰</option><option value="bright">明亮 · 投影被冲淡</option></select></label>
-<label for="canopy-height">天幕底面离地（m）<input id="canopy-height" type="number" min="1.6" max="4" step="0.01" value="2.27"></label><p id="geometry-error" class="error" role="status"></p>
+</div></details>
+<details open><summary>天幕探索<span>CANOPY</span></summary><div class="details-body canopy-study">
+<p>水面像一面平放的镜子：站在旁边的人，在水里看到的是水塘另一侧、更高处的天幕。碎石区中间只有一块不规则水面，四周露出石子，只有水面会映出天幕。调天幕的大小和位置，看每个站位的水面里有多少能映出投影天空。</p>
+<div class="field-pair"><label for="canopy-width">天幕宽 X（m）<input id="canopy-width" type="number" min="0.2" max="30" step="0.01" value="0.84"></label><label for="canopy-depth">天幕深 Z（m）<input id="canopy-depth" type="number" min="0.2" max="30" step="0.01" value="1.19"></label></div>
+<label for="canopy-height">天幕底面离地（m）<input id="canopy-height" type="number" min="1.2" max="5" step="0.01" value="2.27"></label>
+<div class="field-pair"><label for="canopy-x">中心偏移 X（m）<input id="canopy-x" data-geometry="panelX" type="number" min="-4" max="4" step="0.01" value="0"></label><label for="canopy-z">中心偏移 Z（m）<input id="canopy-z" data-geometry="panelZ" type="number" min="-4" max="4" step="0.01" value="0"></label></div>
+<p id="geometry-error" class="error" role="status"></p>
+<h3 class="study-subhead">观众站位</h3>
+<label for="view-arc">观众站在<select id="view-arc"><option value="all">四周 · 360°</option><option value="half">正面半圈 · 180°</option><option value="quarter">正面 · 90°</option><option value="front">只在正面 · 0°</option></select></label>
+<div class="field-pair"><label for="view-near">眼睛离水塘中心 最近（m）<input id="view-near" data-geometry="viewNear" type="number" min="0.3" max="6" step="0.01" value="0.65"></label><label for="view-far">最远（m）<input id="view-far" data-geometry="viewFar" type="number" min="0.3" max="6" step="0.01" value="1"></label></div>
+<div class="field-pair"><label for="eye-low">眼高 最低（m）<input id="eye-low" data-geometry="eyeLow" type="number" min="0.5" max="2.2" step="0.01" value="1.2"></label><label for="eye-high">最高（m）<input id="eye-high" data-geometry="eyeHeight" type="number" min="0.5" max="2.2" step="0.01" value="1.62"></label></div>
+<div class="field-pair"><label for="pond-width">碎石区宽 X（m）<input id="pond-width" data-geometry="pondWidth" type="number" min="0.1" max="0.9" step="0.01" value="0.58"></label><label for="pond-depth">碎石区深 Z（m）<input id="pond-depth" data-geometry="pondDepth" type="number" min="0.1" max="0.9" step="0.01" value="0.58"></label></div>
+<div class="field-pair"><label for="water-width">水面宽 X（m）<input id="water-width" data-geometry="waterWidth" type="number" min="0.05" max="0.9" step="0.01" value="0.42"></label><label for="water-depth">水面深 Z（m）<input id="water-depth" data-geometry="waterDepth" type="number" min="0.05" max="0.9" step="0.01" value="0.38"></label></div>
+<p class="hint">正面 = 倒影检查的 0° 方向（平面俯视时在画面下方）。站在木框边低头看时，眼睛约离水塘中心 0.6–0.7 m。最低眼高可按儿童或坐轮椅的观众设。水面形状不规则，宽深指外接尺寸，每边至少比碎石区小 1 cm。</p>
+<div id="canopy-result" class="study-result" role="status" aria-live="polite"></div>
+<button id="canopy-apply">套用：刚好映满所有站位的天幕</button>
+<table class="build-table study-heights"><caption>不同高度下映满所有站位所需的天幕</caption><thead><tr><th>底面离地</th><th>宽 × 深</th><th>中心 X, Z</th></tr></thead><tbody id="canopy-heights"></tbody></table>
+<label class="check"><input id="canopy-overlay" type="checkbox" checked>3D 中显示缺天空的范围与站位</label>
+<p class="study-legend">黄色：观众会在水里看到、但没有投影的天花区域。虚线：映满所需的最小天幕。地面圆点：该站位水面映出天空的比例（绿＝全部，红＝没有，取最低与最高眼高中较差者）。白线：倒影检查观众的视线，经水面边缘四点反射到天花。</p>
 </div></details>
 <details open><summary>构造清单<span>BUILD</span></summary><div class="details-body">
 <table class="build-table"><thead><tr><th>部件</th><th>尺寸 / 做法</th><th>依据</th></tr></thead><tbody>
-<tr><td>天幕</td><td>A0 · 841 × 1189 mm，水平，底面承接投影</td><td>已定</td></tr>
+<tr><td>天幕</td><td>宽 × 深与位置在「天幕探索」中调整（内置默认 A0 · 841 × 1189 mm），水平，底面承接投影</td><td>待定</td></tr>
 <tr><td>天幕高度</td><td>2.27 m（沿用前版默认，可调）</td><td>假设</td></tr>
-<tr><td>木质框架</td><td>700 × 700 mm 正方形</td><td>已定</td></tr>
-<tr><td>框高 / 板厚</td><td>150 mm / 35 mm</td><td>假设</td></tr>
-<tr><td>防水</td><td>Pond liner 包裹框架内侧、顶边与外侧</td><td>已定</td></tr>
-<tr><td>边缘</td><td>砖块围边装饰</td><td>已定</td></tr>
-<tr><td>砖块规格</td><td>230 × 110 × 76 mm，两层干摆，风车式错缝</td><td>假设</td></tr>
-<tr><td>地形</td><td>迷你黑色石块填充，形成浅凹</td><td>已定</td></tr>
-<tr><td>石块与凹深</td><td>粒径约 10–20 mm；中部下凹约 35 mm</td><td>假设</td></tr>
-<tr><td>水洼</td><td>加水形成；水位固定，模拟约 42 × 41 cm</td><td>做法已定，尺寸为模拟</td></tr>
+<tr><td>底座</td><td>1000 × 1000 mm 正方形</td><td>已定</td></tr>
+<tr><td>木框</td><td>黑色木框；高约 60 mm、板厚约 30 mm</td><td>外形已定，尺寸为估计</td></tr>
+<tr><td>铺路砖</td><td>灰色混凝土砖两圈，围出中间碎石区；约 200 × 100 × 50 mm</td><td>做法已定，规格为估计</td></tr>
+<tr><td>碎石区</td><td>中间黑色碎石区约 580 × 580 mm，可在「天幕探索」中改</td><td>做法已定，尺寸按照片估计</td></tr>
+<tr><td>碎石</td><td>黑色碎石铺底；水面以外的石子高出水面约 8 mm</td><td>已定，高度为估计</td></tr>
+<tr><td>防水</td><td>Pond liner 铺在碎石下</td><td>假设</td></tr>
+<tr><td>水面</td><td>碎石区中间一块不规则水面，外接约 420 × 380 mm（可改），离地约 50 mm，固定水位</td><td>假设</td></tr>
 </tbody></table></div></details>
 <details open><summary>模拟说明<span>NOTES</span></summary><div class="details-body">
-<p>水洼轮廓由石块地形与固定水位决定：低于水面的地形显示为水。本版不再模拟水位变化或岸线退缩。</p>
+<p>水塘为中间碎石区加水后的整片矩形水面，按固定水位绘制；碎石形态未逐粒模拟。</p>
 <p>天幕底面直接显示「投影设定」中的同一实时天空，以叠加光表现；投影机型号、位置与投射距离未定，模型中不绘制。</p>
-<p>倒影亮度、水色与石块形态为视觉近似，未做光学或材料标定。照明切换用于比较环境光对投影可读性的影响。</p>
+<p>天幕探索按平面镜反射计算：水面视为完全平静，天幕视为水平平面，观众眼睛视为一点，未计头部和身体遮挡。倒影亮度与水色为视觉近似，未做光学标定。照明切换用于比较环境光对投影可读性的影响。</p>
 <button id="open-projection-settings">打开投影设定 →</button>
-</div></details></aside></div></section></main><div id="fatal" role="alert" hidden></div><div id="projection-hint" hidden>双击全屏 · Esc 退出全屏</div></body>
+</div></details></aside></div></section></main><div id="fatal" role="alert" hidden></div></body>
 </html>

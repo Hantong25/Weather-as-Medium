@@ -2,7 +2,10 @@
 export const DEFAULT_GEOMETRY = { skyShape:'fill', skyAspect:.841/1.189, angle:0, height:2.27, diameter:.841, panelX:0, panelZ:0, tiltX:0, tiltZ:0, panelYaw:0,
   baseX:0, baseZ:0, baseY:0, baseHeight:.07, baseRotation:0, area:Math.PI*.5**2, pondScale:1,
   eyeHeight:1.62, distance:2.64, farDistance:5, fov:60, viewMode:'walk', eyeX:0, eyeZ:5, yaw:180, pitch:-6,
-  layout:'custom', equipment:false, customPools:[{x:0,z:0,width:.5,depth:.5,scale:1,angle:0,seed:0,roughness:0,shape:2}], objects:[], surface:{material:'stone',color:'#797e70'}, quality:'auto', waterDropMm:3, shoreRetreat:10 };
+  layout:'custom', equipment:false,
+  // Canopy study (2026-10-23): gravel area in the centre of the 1 m base (pond*), the water inside it (water*), where
+  // viewers stand and how low their eyes go.
+  pondWidth:.58, pondDepth:.58, waterWidth:.42, waterDepth:.38, eyeLow:1.2, viewNear:.65, viewFar:1, viewArc:'all', customPools:[{x:0,z:0,width:.5,depth:.5,scale:1,angle:0,seed:0,roughness:0,shape:2}], objects:[], surface:{material:'stone',color:'#797e70'}, quality:'auto', waterDropMm:3, shoreRetreat:10 };
 export const LAYOUTS = { center:{label:'中央单水洼',count:1}, edge:{label:'单圈边缘水洼',count:8}, double:{label:'内外双圈水洼',count:14}, custom:{label:'自定义水洼',count:0} };
 const rad = x => (x || 0)*Math.PI/180;
 export const dot = (a,b) => a.reduce((sum,x,i)=>sum+x*b[i],0);
@@ -121,6 +124,7 @@ export function geometryProblem(g) {
   const bottom=g.height-drop;
   if(bottom<=(g.baseY||0)+(g.baseHeight||0)+.05)return '天幕最低点需高于水面至少 0.05 m。';
   if(g.eyeHeight<.1)return '眼高需高于地面至少 0.1 m。';
+  if(g.waterWidth>g.pondWidth-.02||g.waterDepth>g.pondDepth-.02)return '水面需比碎石区每边小至少 1 cm。';
   return '';
 }
 

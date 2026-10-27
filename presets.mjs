@@ -1,9 +1,9 @@
-import {validatePresetStore} from './studio.mjs?v=2026.10.19.2';
+import {validatePresetStore} from './studio.mjs?v=2026.10.27.1';
 const LEGACY='ephemeral.studio.presets.v1',MIRROR='ephemeral.studio.presets.v2';
-export const emptyPresets=()=>({version:2,scenes:[],colours:[],defaultId:null,legacyImports:[]});
+export const emptyPresets=()=>({version:2,scenes:[],colours:[],clouds:[],defaultId:null,legacyImports:[]});
 export async function mergePresets(current,incoming){
  const next=validatePresetStore(current),source=validatePresetStore(incoming),ids=new Map();
- for(const key of ['scenes','colours'])for(const item of source[key]){
+ for(const key of ['scenes','colours','clouds'])for(const item of source[key]){
   const bytes=new TextEncoder().encode(JSON.stringify([key,item])),hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(x=>x.toString(16).padStart(2,'0')).join('');
   if(next.legacyImports.includes(hash))continue;
   const same=next[key].find(x=>JSON.stringify(x)===JSON.stringify(item));if(same)ids.set(item.id,same.id);

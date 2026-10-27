@@ -3,22 +3,22 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ecebe5"><link rel="icon" href="data:,">
-<title>Ephemeral — Sky Studio · CONCEPT 3D 2026.10.19.2</title><link rel="stylesheet" href="style.css?v=2026.10.19.2"><script src="vendor/p5.min.js"></script><script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script><script type="module" src="sketch.js?v=2026.10.19.2"></script>
+<title>Accumulus — Sky Studio · CONCEPT 3D 2026.10.27.1</title><link rel="stylesheet" href="style.css?v=2026.10.27.1"><script src="vendor/p5.min.js"></script><script type="importmap">{"imports":{"three":"./vendor/three/three.module.min.js"}}</script><script type="module" src="sketch.js?v=2026.10.27.1"></script>
 </head>
 <body>
 <header class="topbar">
-  <a class="wordmark" href="en.html">EPHEMERAL<span>WEATHER REPORT</span></a>
+  <a class="wordmark" href="en.html">ACCUMULUS<span>FOR EPHEMERAL</span></a>
   <nav class="view-tabs" aria-label="Workspace"><button data-view="sky" aria-selected="true" role="tab" aria-controls="sky-view">Projection settings</button><button data-view="scene" aria-selected="false" role="tab" aria-controls="scene-view">Concept 3D</button></nav>
   <span id="phase-status" class="phase-status"></span>
-  <div class="top-actions"><span class="release-banner" role="status">CONCEPT 3D · 2026.10.19.2</span><a id="language-switch" href="index.html" lang="zh-CN" aria-label="Switch to Chinese">中文</a><button id="project">Open projection ↗</button><button id="fullscreen" aria-pressed="false">Fullscreen sky</button></div>
+  <div class="top-actions"><span class="release-banner" role="status">CONCEPT 3D · 2026.10.27.1</span><a id="language-switch" href="index.html" lang="zh-CN" aria-label="Switch to Chinese">中文</a><button id="project">Open projection ↗</button><button id="mapping" aria-pressed="false">Projection mapping</button><button id="fullscreen" aria-pressed="false">Fullscreen sky</button></div>
 </header>
 <section id="simulation-controls" aria-label="Weather simulation timeline">
   <div class="playback">
-    <div class="clock"><strong id="clock">00.0</strong><span id="cycle-duration">60 seconds / cycle · looping</span></div>
+    <div class="clock"><strong id="clock">00.0</strong><span id="cycle-duration">240 seconds / cycle · looping</span></div>
     <button id="play" class="primary" aria-pressed="false">Pause</button><button id="restart">Replay</button>
     <div class="track">
-      <input id="scrub" type="range" min="0" max="85" step="0.1" value="0" aria-label="Scrub the weather cycle">
-      <div class="timeline" aria-label="Jump to a weather phase"><button data-time="3" style="flex:8"><span>01</span> Sunrise<small>0–8 s</small><i></i></button><button data-time="10" style="flex:4"><span>02</span> Sunny<small>8–12 s</small><i></i></button><button data-time="16" style="flex:10"><span>03</span> Sunset<small>12–22 s</small><i></i></button><button data-time="23.5" style="flex:3"><span>04</span> Overcast night<small>22–25 s</small><i></i></button></div>
+      <input id="scrub" type="range" min="0" max="240" step="0.1" value="0" aria-label="Scrub the weather cycle">
+      <div class="timeline" aria-label="Jump to a weather phase"><button data-time="30" style="flex:60"><span>01</span> Morning<small>0–60 s</small><i></i></button><button data-time="90" style="flex:60"><span>02</span> Day<small>60–120 s</small><i></i></button><button data-time="150" style="flex:60"><span>03</span> Sunset glow<small>120–180 s</small><i></i></button><button data-time="210" style="flex:60"><span>04</span> Starry night<small>180–240 s</small><i></i></button></div>
     </div>
     <button id="stop" class="stop">Stop <kbd>■</kbd></button><button id="recover" hidden>Restart</button>
   </div>
@@ -33,7 +33,7 @@
 
 <section class="dock" aria-label="Timing, presets, reflection, camera and output">
   <div class="dock-head">
-    <div class="dock-tabs" role="tablist"><button role="tab" data-dock="reflection" aria-selected="true" aria-controls="dock-reflection">Reflection check</button><button role="tab" data-dock="timing" aria-selected="false" aria-controls="dock-timing">Timing</button><button role="tab" data-dock="presets" aria-selected="false" aria-controls="dock-presets">Presets</button><button role="tab" data-dock="camera" aria-selected="false" aria-controls="dock-camera">Camera</button><button role="tab" data-dock="output" aria-selected="false" aria-controls="dock-output">Audio file and log</button></div>
+    <div class="dock-tabs" role="tablist"><button role="tab" data-dock="reflection" aria-selected="true" aria-controls="dock-reflection">Reflection check</button><button role="tab" data-dock="timing" aria-selected="false" aria-controls="dock-timing">Timing</button><button role="tab" data-dock="presets" aria-selected="false" aria-controls="dock-presets">Presets</button><button role="tab" data-dock="camera" aria-selected="false" aria-controls="dock-camera">Camera</button><button role="tab" data-dock="mapping" aria-selected="false" aria-controls="dock-mapping">Projection mapping</button><button role="tab" data-dock="output" aria-selected="false" aria-controls="dock-output">Audio file and log</button></div>
     <p id="notice" class="notice" role="status" aria-live="polite">The preview starts with four visitors. Switching styles keeps the same moment for comparison.</p>
   </div>
 
@@ -41,17 +41,17 @@
     <div id="reflection-host"></div>
     <div class="dock-fields">
       <div class="view-heading"><span>02 / REFLECTION VIEW</span><span id="angle-value">0°</span></div>
-      <label class="angle-label" for="angle">Move around the puddle<input id="angle" type="range" min="0" max="360" step="1" value="0"></label>
+      <label class="angle-label" for="angle">Move around the pond<input id="angle" type="range" min="0" max="360" step="1" value="0"></label>
       <div class="compass" aria-label="Viewing direction"><button data-angle="0" aria-label="View from 0 degrees">0°</button><button data-angle="90" aria-label="View from 90 degrees">90°</button><button data-angle="180" aria-label="View from 180 degrees">180°</button><button data-angle="270" aria-label="View from 270 degrees">270°</button></div>
-      <p id="coverage" class="hint">Looking down from about 0.6 m from the puddle centre at 1.62 m eye height. Brightness is a visual approximation.</p>
+      <p id="coverage" class="hint">Looking down with the eyes 0.65 m from the pond centre at 1.62 m eye height. Brightness is a visual approximation.</p>
     </div>
   </div>
 
   <div class="dock-panel" id="dock-timing" role="tabpanel" hidden>
-    <div class="timing-presets"><button data-timing="slow">Slow · 660 s</button><button data-timing="standard" aria-pressed="true">Natural · 60 s</button><button data-timing="quick">Quick · 32 s</button></div>
-    <div class="timing-grid"><fieldset><legend>01 / Sunrise</legend><label for="stage-duration-0">Duration (s)<input id="stage-duration-0" data-duration="0" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-0">Cloud edges (×)<input id="stage-rate-0" data-rate="0" type="number" min="0.1" max="3" step="0.1" value="0.7" required></label></fieldset><fieldset><legend>02 / Sunny</legend><label for="stage-duration-1">Duration (s)<input id="stage-duration-1" data-duration="1" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-1">Cloud edges (×)<input id="stage-rate-1" data-rate="1" type="number" min="0.1" max="3" step="0.1" value="0.8" required></label></fieldset><fieldset><legend>03 / Sunset</legend><label for="stage-duration-2">Duration (s)<input id="stage-duration-2" data-duration="2" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-2">Cloud edges (×)<input id="stage-rate-2" data-rate="2" type="number" min="0.1" max="3" step="0.1" value="0.9" required></label></fieldset><fieldset><legend>04 / Overcast night</legend><label for="stage-duration-3">Duration (s)<input id="stage-duration-3" data-duration="3" type="number" min="2" max="300" step="1" value="60" required></label><label for="stage-rate-3">Cloud edges (×)<input id="stage-rate-3" data-rate="3" type="number" min="0.1" max="3" step="0.1" value="0.6" required></label></fieldset></div>
-    <div class="timing-actions"><label for="rate-blend">Speed transition blend (s)<input id="rate-blend" type="number" min="0.5" max="15" step="0.5" value="5"></label><button id="timing-apply">Apply timing and replay</button><p id="timing-error" role="status"></p></div>
-    <p class="hint">Sunrise → sunny → sunset → overcast night loops. The sun follows its real October path over Melbourne; durations only set how long each part lasts. Cloud closes in at night with rain sound and clears before dawn.</p>
+    <div class="timing-presets"><button data-timing="slow">Slow · 660 s</button><button data-timing="standard" aria-pressed="true">Natural · 240 s</button><button data-timing="quick">Quick · 60 s</button></div>
+    <div class="timing-grid"><fieldset><legend>01 / Morning</legend><label class="check"><input data-part-on="0" type="checkbox" checked>On</label><label for="stage-duration-0">Duration (s)<input id="stage-duration-0" data-duration="0" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-0">Transition starts: before the end (s)<input id="edge-out-0" data-edge-out="0" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-0">Transition ends: into the next part (s)<input id="edge-in-0" data-edge-in="0" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset><fieldset><legend>02 / Day</legend><label class="check"><input data-part-on="1" type="checkbox" checked>On</label><label for="stage-duration-1">Duration (s)<input id="stage-duration-1" data-duration="1" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-1">Transition starts: before the end (s)<input id="edge-out-1" data-edge-out="1" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-1">Transition ends: into the next part (s)<input id="edge-in-1" data-edge-in="1" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset><fieldset><legend>03 / Sunset glow</legend><label class="check"><input data-part-on="2" type="checkbox" checked>On</label><label for="stage-duration-2">Duration (s)<input id="stage-duration-2" data-duration="2" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-2">Transition starts: before the end (s)<input id="edge-out-2" data-edge-out="2" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-2">Transition ends: into the next part (s)<input id="edge-in-2" data-edge-in="2" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset><fieldset><legend>04 / Starry night</legend><label class="check"><input data-part-on="3" type="checkbox" checked>On</label><label for="stage-duration-3">Duration (s)<input id="stage-duration-3" data-duration="3" type="number" min="2" max="300" step="1" value="60" required></label><label for="edge-out-3">Transition starts: before the end (s)<input id="edge-out-3" data-edge-out="3" type="number" min="0" max="300" step="0.5" value="10" required></label><label for="edge-in-3">Transition ends: into the next part (s)<input id="edge-in-3" data-edge-in="3" type="number" min="0" max="300" step="0.5" value="10" required></label></fieldset></div>
+    <div class="timing-actions"><button id="timing-apply">Apply timing and replay</button><p id="timing-error" role="status"></p></div>
+    <p class="hint">Morning → day → sunset glow → starry night loops, 60 s each by default. The sun follows its real October path over Melbourne and each part takes one stretch of it: morning around sunrise, day from mid-morning to mid-afternoon, sunset glow around sunset, night a starry sky with moonlit clouds. A transition starts a set number of seconds before a part ends and ends a set number of seconds into the next part; when the next part follows on along the sun's path the sun moves on smoothly, and when a part in between is off the two skies cross-fade. Untick a part to switch it off (at least one stays on); ticking applies at once, while durations and transitions apply with Apply timing and replay. Quick, natural and slow set durations and transitions only, not which parts are on. Cloud drift and shape-change speeds are set under Wind and motion and stay constant throughout.
   </div>
 
   <div class="dock-panel parameter-presets" id="dock-presets" role="tabpanel" hidden>
@@ -72,16 +72,27 @@
     </div>
     <div class="dock-fields">
       <label for="camera-select">Camera<select id="camera-select"><option value="">System default camera</option></select></label>
-      <label for="threshold">Minimum detection confidence <output id="threshold-value">55%</output><input id="threshold" type="range" min="35" max="85" value="55"></label>
+      <label for="threshold">Minimum detection confidence <output id="threshold-value">50%</output><input id="threshold" type="range" min="35" max="85" value="50"></label>
       <label for="roi">Detection area<select id="roi"><option value="0">Full frame</option><option value="0.1">Central 80%</option><option value="0.2">Central 60%</option></select></label>
-      <p class="hint">Only the count is used; cloud positions do not represent visitor locations.</p>
+      <label for="count-hold">Count confirmation time <output id="count-hold-value">3 s</output><input id="count-hold" type="range" min="1" max="10" step="1" value="3"></label>
+      <p class="hint">Detection runs once a second. The count is the median of the detections over the confirmation time, so a person missed or a false detection in single frames never flashes a cloud; a change counts once it holds for about half that time, and the clouds then fade over the cloud appear / disappear times. Only the count is used; cloud positions do not represent visitor locations. Detection uses the YOLOX-tiny person model (front, back and side views) in a background thread; people in paintings or posters may also be counted, so exclude them with Detection area. A plugged-in USB webcam appears in the list automatically.</p>
     </div>
+  </div>
+
+  <div class="dock-panel mapping-panel" id="dock-mapping" role="tabpanel" hidden>
+    <div id="mapping-board" class="mapping-board" role="group" aria-label="Projection window: drag the four corners"></div>
+    <div class="dock-fields">
+      <div class="button-row"><button id="mapping-edit" aria-pressed="false">Start calibrating</button><button id="mapping-reset">Reset corners</button><button id="mapping-off">Switch mapping off</button></div>
+      <p id="mapping-status" role="status" aria-live="polite"></p>
+      <div class="field-pair"><label for="mapping-width">Canopy width (m)<input id="mapping-width" type="number" min="0.2" max="30" step="0.01" value="0.84"></label><label for="mapping-depth">Canopy depth (m)<input id="mapping-depth" type="number" min="0.2" max="30" step="0.01" value="1.19"></label></div>
+    </div>
+    <div class="dock-fields"><p class="hint">The box stands for the projector image. First move the projection window to the projector screen and double-click for full screen, then click Start calibrating: a grid and four coloured dots (1 red, 2 yellow, 3 green, 4 blue) appear on the canopy, matching corners 1–4 in the box. Drag each corner, or select it and nudge with the arrow keys (1 projector pixel, Shift 10), until the dots sit on the canopy corners, the grid squares look square and the circle round. This step undoes the keystone of the angled projector: the picture is drawn at the canopy's proportions and then warped in perspective onto the four corners, so the clouds on the canopy keep their shape. Enter the canopy's real width and depth (equal for a square canopy) or the picture is stretched. The corners save automatically and survive restarts.</p></div>
   </div>
 
   <div class="dock-panel output-panel" id="dock-output" role="tabpanel" hidden>
     <div class="dock-fields">
       <label for="rain-file">Replace rain audio<input id="rain-file" type="file" accept="audio/*"></label><button id="rain-default">Restore bundled rain</button>
-      <p class="hint">Use an extended display; the projection window follows this page's weather and style. All clouds are procedural; no artwork from the references is reused.</p>
+      <p class="hint">Use an extended display; the projection window follows this page's weather and style. For an angled projector, line up the four corners with the canopy corners in the Projection mapping tab. The projection window shows no text, buttons or pointer: double-click for full screen, Esc to leave it. All clouds are procedural; no artwork from the references is reused.</p>
       <a class="readme" href="README_EN.md" target="_blank">Viewing logic and instructions ↗</a>
     </div>
     <div class="log-box"><span class="eyebrow">ACTIVITY LOG</span><ol id="log"></ol></div>
@@ -97,74 +108,138 @@
       <button data-style="2" aria-pressed="false"><span class="swatch watercolour"></span><span><strong>Watercolour</strong><small>WATERCOLOUR</small></span></button>
     </div>
     <p id="style-note" class="hint">Atmospheric scattering from the sun position; particle clouds lit by sunlight, skylight and city glow at night.</p>
+    <label for="style-mix" class="slider-label">Style strength (pastel and watercolour strokes, paper) <output id="style-mix-value">100%</output><input id="style-mix" data-setting="styleMix" type="range" min="0" max="1" step="0.05" value="1"></label>
   </div></details>
 
   <details open><summary>Audience and image<span>AUDIENCE</span></summary><div class="details-body">
-    <div class="presence"><label for="test-people">Preview visitors <small id="input-source">Visual preview</small></label><div class="count-readout"><input id="test-people" type="number" min="0" max="20" step="1" value="4"><span>visitors → <strong id="cloud-count">4</strong> clouds</span></div><p id="count-note" class="hint">One cloud per visitor: it fades in on a clear patch of the canopy and drifts with the wind; as it drifts off or dissipates, a new cloud with a different shape forms upwind. It fades out after they leave.</p></div>
+    <div class="presence"><label for="test-people">Preview visitors <small id="input-source">Visual preview</small></label><div class="count-readout"><input id="test-people" type="number" min="0" max="20" step="1" value="4"><span>visitors → <strong id="cloud-count">4</strong> clouds</span></div><p id="count-note" class="hint">One cloud per visitor: it fades in on a clear patch of the canopy, drifts with the wind and leaves the picture whole; as it starts to leave, a new cloud with a different shape drifts in from the opposite (upwind) side. It fades out after they leave. In still air a cloud dissipates where it is after a minute or two and a new one forms; forming and dissipating also follow the two times below.</p></div>
+    <label for="cloud-appear" class="slider-label">Cloud appear time (fade-in after a visitor arrives) <output id="cloud-appear-value">8 s</output><input id="cloud-appear" data-setting="cloudAppear" type="range" min="2" max="60" step="1" value="8"></label>
+    <label for="cloud-vanish" class="slider-label">Cloud disappear time (fade-out after a visitor leaves) <output id="cloud-vanish-value">10 s</output><input id="cloud-vanish" data-setting="cloudVanish" type="range" min="2" max="60" step="1" value="10"></label>
     <label for="sky-shape">Sky shape<select id="sky-shape"><option value="fill" selected>Fill screen</option><option value="circle">Circle</option><option value="square">Square</option></select></label>
     <label for="brightness" class="slider-label">Sky brightness<input id="brightness" type="range" min="65" max="130" value="100"></label>
-    <label for="rotation" class="slider-label">Canopy orientation <output id="rotation-value">0°</output><input id="rotation" type="range" min="0" max="360" value="0"></label>
+    <label for="rotation" class="slider-label">Canopy orientation (sun, wind and clouds turn together) <output id="rotation-value">0°</output><input id="rotation" type="range" min="0" max="360" value="0"></label>
+    <p class="hint">At 0° north is at the top of the picture and east on the left (seen from below). In the gallery, turn it until the projected sky matches the real directions: brighter in the east in the morning, the sunset glow in the west, the midday sun to the north.</p>
     <label class="check"><input id="reduce" type="checkbox">Reduce cloud drift and water movement</label>
+  </div></details>
+
+  <details open id="output-region"><summary>Cloud region<span>REGION</span></summary><div class="details-body">
+    <label for="region-x" class="slider-label">Region centre · left → right <output id="region-x-value">50%</output><input id="region-x" data-setting="regionX" type="range" min="0" max="1" step="0.01" value="0.5"></label>
+    <label for="region-y" class="slider-label">Region centre · top → bottom <output id="region-y-value">50%</output><input id="region-y" data-setting="regionY" type="range" min="0" max="1" step="0.01" value="0.5"></label>
+    <label for="region-w" class="slider-label">Region width <output id="region-w-value">100%</output><input id="region-w" data-setting="regionW" type="range" min="0.1" max="1" step="0.01" value="1"></label>
+    <label for="region-h" class="slider-label">Region height <output id="region-h-value">100%</output><input id="region-h" data-setting="regionH" type="range" min="0.1" max="1" step="0.01" value="1"></label>
+    <label for="feather" class="slider-label">Edge feather (fade distance drifting in and out, of the shorter side) <output id="feather-value">30%</output><input id="feather" data-setting="feather" type="range" min="0" max="0.5" step="0.01" value="0.3"></label>
+    <button id="region-reset">Clouds over the whole frame</button>
+    <p class="hint">Big clouds form only inside this region (set as shares of the frame), smaller and closer together to suit its size; the sky and its thin background cloud outside it stay as they are, so the image is still one whole sky with no frame drawn. New clouds gather as they drift in from beyond the upwind edge and fade away after drifting out downwind; Edge feather sets that distance. Where the region meets the edge of the picture, clouds drift out whole before fading. Saved with parameter presets; the projection window and the 3D canopy follow it.</p>
   </div></details>
 
   <details open><summary>Rain sound<span>SOUND</span></summary><div class="details-body sound-controls" id="sound-panel">
     <button id="audio" aria-pressed="false">Enable rain sound</button>
     <label for="volume">Volume<input id="volume" type="range" min="0" max="100" value="35"><output id="volume-value">35%</output></label>
     <button id="rain-preview" aria-pressed="false">Preview this count · 6 seconds</button>
-    <p id="rain-density" class="hint">Rain density follows visitor count.</p><p class="hint">Built-in garden rain · <a href="assets/audio/CREDITS.md" target="_blank">barkenov / CC0 ↗</a></p>
+    <p id="rain-density" class="hint">Rain density follows visitor count. The loop no longer has a rainy night, so rain plays only in previews.</p><p class="hint">Built-in garden rain · <a href="assets/audio/CREDITS.md" target="_blank">barkenov / CC0 ↗</a></p>
   </div></details>
 </div>
 <div class="inspector-col">
   <details open id="sky-options"><summary>Atmosphere and grade<span>SKY</span></summary><div class="details-body">
     <div class="field-pair"><label for="atmosphere">Atmosphere<select id="atmosphere"><option value="melbourne">Melbourne everyday</option><option value="clear">Clear after rain</option><option value="marine">Soft sea haze</option><option value="haze">Hazy warm sun</option><option value="smoke">Bushfire smoke</option><option value="volcanic">Volcanic twilight (approx.)</option></select></label><label for="grade">Colour grade<select id="grade"><option value="natural">Natural</option><option value="warm">Warm film</option><option value="cool">Cool morning</option><option value="dream">Dreamy pink-violet</option><option value="pastel">Soft pastel</option><option value="silver">Black and white</option></select></label></div>
+    <label for="grade-mix" class="slider-label">Grade strength <output id="grade-mix-value">100%</output><input id="grade-mix" data-setting="gradeMix" type="range" min="0" max="1" step="0.05" value="1"></label>
     <label for="turbidity" class="slider-label">Atmospheric turbidity (1 clean – 40 dense smoke)<input id="turbidity" data-setting="turbidity" type="range" min="1" max="40" step="0.5" value="2.5"></label>
     <label for="city-glow" class="slider-label">Night city glow (on cloud bases)<input id="city-glow" data-setting="cityGlow" type="range" min="0" max="1" step="0.05" value="0.6"></label>
-    <p class="hint">Atmosphere changes the air itself and colour is still computed by scattering; choosing one moves turbidity to its typical value. The grade sits on top of the final image and combines with any atmosphere.</p>
+    <label for="moonlight" class="slider-label">Night moonlight (on one side of the clouds) <output id="moonlight-value">×1.00</output><input id="moonlight" data-setting="moonlight" type="range" min="0" max="2" step="0.05" value="1"></label>
+    <p class="hint">Atmosphere changes the air itself and colour is still computed by scattering; choosing one moves turbidity to its typical value. The grade sits on top of the final image and combines with any atmosphere; strength 0 leaves the image ungraded. The night is a clear starry sky, with a full moon opposite the sun lighting the clouds.</p>
   </div></details>
 
-  <details open><summary>Cloud shapes<span>CLOUD</span></summary><div class="details-body">
+  <details open id="part-colours"><summary>Colour by part<span>COLOUR</span></summary><div class="details-body">
+    <div class="part-picker" role="group" aria-label="Choose a loop part"><button data-part="0" aria-pressed="true">Morning</button><button data-part="1" aria-pressed="false">Day</button><button data-part="2" aria-pressed="false">Sunset</button><button data-part="3" aria-pressed="false">Night</button></div>
+    <div class="colour-row"><label for="part-sky">Sky<input id="part-sky" data-hue="sky" type="color" value="#7aa6ff"></label><label for="part-sky-mix" class="slider-label">Strength <output id="part-sky-mix-value">0%</output><input id="part-sky-mix" data-part-setting="skyMix" type="range" min="0" max="1" step="0.05" value="0"></label></div><div class="colour-row"><label for="part-light">Cloud light<input id="part-light" data-hue="light" type="color" value="#ffc58f"></label><label for="part-light-mix" class="slider-label">Strength <output id="part-light-mix-value">0%</output><input id="part-light-mix" data-part-setting="lightMix" type="range" min="0" max="1" step="0.05" value="0"></label></div><div class="colour-row"><label for="part-shade">Cloud shade<input id="part-shade" data-hue="shade" type="color" value="#7f8fc4"></label><label for="part-shade-mix" class="slider-label">Strength <output id="part-shade-mix-value">0%</output><input id="part-shade-mix" data-part-setting="shadeMix" type="range" min="0" max="1" step="0.05" value="0"></label></div>
+    <label for="part-clear" class="slider-label">Cloud transparency <output id="part-clear-value">0%</output><input id="part-clear" data-part-setting="clear" type="range" min="0" max="0.9" step="0.05" value="0"></label>
+    <label for="part-saturation" class="slider-label">Saturation <output id="part-saturation-value">×1.00</output><input id="part-saturation" data-part-setting="saturation" type="range" min="0" max="2" step="0.05" value="1"></label>
+    <label for="part-stars" class="slider-label">Star brightness <output id="part-stars-value">×1.00</output><input id="part-stars" data-part-setting="stars" type="range" min="0" max="3" step="0.05" value="1"></label>
+    <button id="part-reset">Reset this part</button>
+    <p class="hint">Pick a part, then change it: the sky, the lit side of the clouds (sun or moon) and their shaded side (skylight and city glow) each move towards the chosen colour at the same brightness; strength 0 keeps the physically computed colour, and picking a colour sets the strength to 50%. Transparency lets the sky show through the clouds. During a transition the two parts' settings blend smoothly. Stars appear only at night. Saved with parameter presets; the projection window follows.</p>
+  </div></details>
+
+  <details open id="cloud-look"><summary>Cloud shape and texture<span>CLOUD</span></summary><div class="details-body">
     <label for="cloud-form">Cloud form<select id="cloud-form"><option value="cumulus">Billowing cumulus</option><option value="broken">Broken cloudlets</option><option value="layered">Stretched layers</option></select></label>
+    <div class="cloud-starts" role="group" aria-label="Starting points"><button data-cloud-start="soft" aria-pressed="true">Soft · default</button><button data-cloud-start="ragged" aria-pressed="false">Ragged edges</button><button data-cloud-start="dense" aria-pressed="false">Dense cumulus</button><button data-cloud-start="thin" aria-pressed="false">Thin wisps</button></div>
+    <div class="preset-row cloud-presets"><label for="cloud-preset-list">Saved looks<select id="cloud-preset-list"></select></label><button id="cloud-preset-load" disabled>Load</button><button id="cloud-preset-delete" disabled>Delete</button></div>
+    <div class="preset-row cloud-presets"><label for="cloud-preset-name">Name<input id="cloud-preset-name" type="text" maxlength="60"></label><button id="cloud-preset-save">Save current look</button></div>
+    <p id="cloud-preset-status" class="hint" role="status" aria-live="polite"></p>
+    <p class="eyebrow">SHAPE</p>
+    <label for="cloud-size" class="slider-label">Cloud size <output id="cloud-size-value">1.00</output><input id="cloud-size" data-setting="cloudSize" type="range" min="0.6" max="1.6" step="0.05" value="1"></label>
+    <label for="cloud-warp" class="slider-label">Outline warp <output id="cloud-warp-value">1.00</output><input id="cloud-warp" data-setting="cloudWarp" type="range" min="0" max="3" step="0.05" value="1"></label>
+    <label for="cloud-scale" class="slider-label">Texture scale (coarse → fine) <output id="cloud-scale-value">1.00</output><input id="cloud-scale" data-setting="cloudScale" type="range" min="0.5" max="2" step="0.05" value="1"></label>
+    <label for="cloud-billow" class="slider-label">Billows <output id="cloud-billow-value">0.00</output><input id="cloud-billow" data-setting="cloudBillow" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label for="cloud-lean" class="slider-label">Depth lean (upper layers) <output id="cloud-lean-value">1.00</output><input id="cloud-lean" data-setting="cloudLean" type="range" min="0" max="2" step="0.05" value="1"></label>
+    <p class="eyebrow">THICKNESS</p>
+    <label for="cloud-density" class="slider-label">Density <output id="cloud-density-value">1.00</output><input id="cloud-density" data-setting="cloudDensity" type="range" min="0.3" max="2.5" step="0.05" value="1"></label>
+    <label for="cloud-shadow" class="slider-label">Core shadow <output id="cloud-shadow-value">1.00</output><input id="cloud-shadow" data-setting="cloudShadow" type="range" min="0" max="3" step="0.05" value="1"></label>
+    <p class="eyebrow">EDGE</p>
+    <label for="cloud-detail" class="slider-label">Edge detail <output id="cloud-detail-value">1.00</output><input id="cloud-detail" data-setting="cloudDetail" type="range" min="0" max="2.5" step="0.05" value="1"></label>
+    <label for="cloud-erosion" class="slider-label">Edge erosion <output id="cloud-erosion-value">0.00</output><input id="cloud-erosion" data-setting="cloudErosion" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label for="cloud-softness" class="slider-label">Edge softness (hard → soft) <output id="cloud-softness-value">1.00</output><input id="cloud-softness" data-setting="cloudSoftness" type="range" min="0.1" max="2" step="0.05" value="1"></label>
+    <label for="cloud-silver" class="slider-label">Silver lining <output id="cloud-silver-value">0.00</output><input id="cloud-silver" data-setting="cloudSilver" type="range" min="0" max="1" step="0.05" value="0"></label>
+    <label for="cloud-merge" class="slider-label">Cloud merging (strings between neighbours) <output id="cloud-merge-value">1.00</output><input id="cloud-merge" data-setting="cloudMerge" type="range" min="0" max="1" step="0.05" value="1"></label>
+    <label for="cloud-bump" class="slider-label">Edge bumps <output id="cloud-bump-value">0.00</output><input id="cloud-bump" data-setting="cloudBump" type="range" min="0" max="3" step="0.05" value="0"></label>
+    <p class="hint">“Soft · default” is the 10.19.2 cloud; the other three are starting points to keep adjusting. Less merging keeps neighbouring clouds apart instead of drawing strings between them; edge bumps give the outline rounded bulges and bays. The cloud form and the thirteen values can be saved as a cloud look of their own (in the local preset file) and are also saved with parameter presets; the projection window follows. Billows, erosion, edge detail above 1, and larger or thinner clouds take more GPU time.</p>
   </div></details>
 
-  <details open id="wind-controls"><summary>Wind<span>WIND</span></summary><div class="details-body">
-    <label class="check"><input id="live-wind" type="checkbox" checked>Clouds follow Melbourne's live wind</label>
+  <details open id="wind-controls"><summary>Wind and motion<span>WIND</span></summary><div class="details-body">
+    <label class="check"><input id="live-wind" type="checkbox" checked>Cloud direction follows Melbourne's live wind</label>
     <p id="wind-status" class="hint" role="status" aria-live="polite">Reading Melbourne live wind…</p><p id="wind-values" class="hint"></p>
-    <div class="field-pair"><label for="wind-north">Image north rotation (°)<input id="wind-north" type="number" min="-360" max="360" step="1" value="0"></label><label for="wind-gain">Wind speed visual gain<input id="wind-gain" type="number" min="0.1" max="3" step="0.1" value="1"></label></div>
-    <div class="field-pair"><label for="wind-direction">Manual direction (°)<input id="wind-direction" data-setting="windDirection" type="number" min="0" max="360" step="1" value="25" required></label><label for="wind-speed">Manual drift (×)<input id="wind-speed" data-setting="windSpeed" type="number" min="0" max="3" step="0.1" value="1" required></label></div>
+    <div class="field-pair"><label for="wind-direction">Manual direction (°)<input id="wind-direction" data-setting="windDirection" type="number" min="0" max="360" step="1" value="25" required></label><label for="wind-speed">Drift speed (×)<input id="wind-speed" data-setting="windSpeed" type="number" min="0" max="3" step="0.1" value="1" required></label></div>
+    <label for="morph-rate">Shape change speed (×)<input id="morph-rate" type="number" min="0.1" max="3" step="0.05" value="0.7" required></label>
     <button id="wind-refresh">Refresh live wind</button>
-    <p class="hint">Wind direction is where it blows from, converted for a canopy seen from below (north up, east left); north rotation also turns the sun. 5 m/s equals 1× drift. When off or offline, the manual values apply. Data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> current wind, refreshed every 10 minutes.</p>
+    <p class="hint">Clouds drift and change shape at steady speeds that do not vary with the weather phase or the live wind speed; live wind only sets the direction, and the clouds turn over about half a minute when it changes. Wind direction is where it blows from, converted for a canopy seen from below (north up, east left), and it turns with the sun under Canopy orientation. 1× drift crosses the image's shorter side in about 100 s. When off or offline, the manual direction applies. Data: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> current wind, refreshed every 10 minutes.</p>
   </div></details>
 </div>
 </aside>
 
 </div></section>
 <section class="studio-view" id="scene-view" role="tabpanel" hidden><div class="studio-grid"><div class="scene-work"><div class="scene-viewport" id="scene-viewport"><div id="concept-host" tabindex="0" aria-label="Concept 3D model; drag to orbit, scroll to zoom, or use arrow and plus/minus keys"></div>
-<span class="concept-label" data-anchor="canopy" hidden>A0 canopy · 841 × 1189 mm</span><span class="concept-label" data-anchor="sky" hidden>Projected sky · synced with projection settings</span><span class="concept-label" data-anchor="water" hidden>Puddle · still water mirrors the canopy</span><span class="concept-label" data-anchor="pebbles" hidden>Mini black pebbles · shape the terrain</span><span class="concept-label" data-anchor="liner" hidden>Pond liner · waterproofs the frame</span><span class="concept-label" data-anchor="frame" hidden>Timber frame · 700 × 700 mm</span><span class="concept-label" data-anchor="bricks" hidden>Bricks · edge finish</span><span class="concept-label" data-anchor="person" hidden>Scale figure ≈ 1.65 m</span>
+<span class="concept-label" data-anchor="canopy" id="canopy-label" hidden>Canopy · 841 × 1189 mm</span><span class="concept-label" data-anchor="sky" hidden>Projected sky · synced with projection settings</span><span class="concept-label" data-anchor="water" hidden>Water · a patch in the middle of the gravel, mirrors the canopy</span><span class="concept-label" data-anchor="pebbles" hidden>Black gravel · dry stones round the water</span><span class="concept-label" data-anchor="liner" hidden>Pond liner · under the gravel (assumed)</span><span class="concept-label" data-anchor="frame" hidden>Black timber frame · 1000 × 1000 mm</span><span class="concept-label" data-anchor="bricks" hidden>Grey pavers · two rows</span><span class="concept-label" data-anchor="person" hidden>Reflection-check visitor</span>
 <div class="scene-hud"><span>Drag to orbit · Scroll to zoom · Arrow keys and + / − also work</span><button id="scene-expand">Fullscreen 3D</button></div></div></div>
 <aside class="studio-inspector concept-inspector" aria-label="Concept model notes">
 <details open><summary>Views<span>VIEW</span></summary><div class="details-body">
-<div class="concept-views"><button data-concept-view="overview" aria-pressed="true">Overview</button><button data-concept-view="eye" aria-pressed="false">Visitor view</button><button data-concept-view="puddle" aria-pressed="false">Looking down</button><button data-concept-view="layers" aria-pressed="false">Build layers</button></div>
+<div class="concept-views"><button data-concept-view="overview" aria-pressed="true">Overview</button><button data-concept-view="eye" aria-pressed="false">Visitor view</button><button data-concept-view="puddle" aria-pressed="false">Looking down</button><button data-concept-view="layers" aria-pressed="false">Build layers</button><button data-concept-view="plan" aria-pressed="false">Plan · canopy coverage</button></div>
 <label class="check"><input id="concept-layers" type="checkbox">Separate layers</label><label class="check"><input id="concept-labels" type="checkbox" checked>Show labels</label>
 <label for="concept-light">Gallery lighting<select id="concept-light"><option value="dark" selected>Dark · projection reads clearly</option><option value="bright">Bright · projection washes out</option></select></label>
-<label for="canopy-height">Canopy underside height (m)<input id="canopy-height" type="number" min="1.6" max="4" step="0.01" value="2.27"></label><p id="geometry-error" class="error" role="status"></p>
+</div></details>
+<details open><summary>Canopy study<span>CANOPY</span></summary><div class="details-body canopy-study">
+<p>The water is a mirror laid flat: a visitor beside it sees, in the water, the canopy beyond the pond and higher up. Only an irregular patch in the middle of the gravel holds water, with dry stones all round, and only the water reflects the canopy. Adjust the canopy's size and position to see how much of the water shows projected sky from each standing spot.</p>
+<div class="field-pair"><label for="canopy-width">Canopy width X (m)<input id="canopy-width" type="number" min="0.2" max="30" step="0.01" value="0.84"></label><label for="canopy-depth">Canopy depth Z (m)<input id="canopy-depth" type="number" min="0.2" max="30" step="0.01" value="1.19"></label></div>
+<label for="canopy-height">Canopy underside height (m)<input id="canopy-height" type="number" min="1.2" max="5" step="0.01" value="2.27"></label>
+<div class="field-pair"><label for="canopy-x">Centre offset X (m)<input id="canopy-x" data-geometry="panelX" type="number" min="-4" max="4" step="0.01" value="0"></label><label for="canopy-z">Centre offset Z (m)<input id="canopy-z" data-geometry="panelZ" type="number" min="-4" max="4" step="0.01" value="0"></label></div>
+<p id="geometry-error" class="error" role="status"></p>
+<h3 class="study-subhead">Where visitors stand</h3>
+<label for="view-arc">Visitors stand<select id="view-arc"><option value="all">All round · 360°</option><option value="half">Front half · 180°</option><option value="quarter">Front · 90°</option><option value="front">Front only · 0°</option></select></label>
+<div class="field-pair"><label for="view-near">Eyes from pond centre, nearest (m)<input id="view-near" data-geometry="viewNear" type="number" min="0.3" max="6" step="0.01" value="0.65"></label><label for="view-far">Farthest (m)<input id="view-far" data-geometry="viewFar" type="number" min="0.3" max="6" step="0.01" value="1"></label></div>
+<div class="field-pair"><label for="eye-low">Eye height, lowest (m)<input id="eye-low" data-geometry="eyeLow" type="number" min="0.5" max="2.2" step="0.01" value="1.2"></label><label for="eye-high">Highest (m)<input id="eye-high" data-geometry="eyeHeight" type="number" min="0.5" max="2.2" step="0.01" value="1.62"></label></div>
+<div class="field-pair"><label for="pond-width">Gravel width X (m)<input id="pond-width" data-geometry="pondWidth" type="number" min="0.1" max="0.9" step="0.01" value="0.58"></label><label for="pond-depth">Gravel depth Z (m)<input id="pond-depth" data-geometry="pondDepth" type="number" min="0.1" max="0.9" step="0.01" value="0.58"></label></div>
+<div class="field-pair"><label for="water-width">Water width X (m)<input id="water-width" data-geometry="waterWidth" type="number" min="0.05" max="0.9" step="0.01" value="0.42"></label><label for="water-depth">Water depth Z (m)<input id="water-depth" data-geometry="waterDepth" type="number" min="0.05" max="0.9" step="0.01" value="0.38"></label></div>
+<p class="hint">Front = the 0° direction of the reflection check (bottom of the screen in the plan view). Looking down from the frame edge puts the eyes about 0.6–0.7 m from the pond centre. Set the lowest eye height for children or wheelchair users. The water is irregular; its width and depth are its outer size, at least 1 cm inside the gravel on each side.</p>
+<div id="canopy-result" class="study-result" role="status" aria-live="polite"></div>
+<button id="canopy-apply">Apply: the canopy that fills every reflection</button>
+<table class="build-table study-heights"><caption>Canopy needed to fill the water from every spot, by height</caption><thead><tr><th>Underside height</th><th>Width × depth</th><th>Centre X, Z</th></tr></thead><tbody id="canopy-heights"></tbody></table>
+<label class="check"><input id="canopy-overlay" type="checkbox" checked>Show missing sky and standing spots in 3D</label>
+<p class="study-legend">Amber: ceiling that visitors see in the water but that has no projection. Dashed outline: the smallest canopy that fills every reflection. Floor dots: share of the water showing sky from that spot (green = all, red = none; the worse of the lowest and highest eyes). White lines: the reflection-check visitor's sight lines, reflected at four points of the shore up to the ceiling.</p>
 </div></details>
 <details open><summary>Build list<span>BUILD</span></summary><div class="details-body">
 <table class="build-table"><thead><tr><th>Part</th><th>Size / method</th><th>Basis</th></tr></thead><tbody>
-<tr><td>Canopy</td><td>A0 · 841 × 1189 mm, horizontal, underside receives projection</td><td>Decided</td></tr>
+<tr><td>Canopy</td><td>Width × depth and position set in the canopy study (factory default A0 · 841 × 1189 mm), horizontal, underside receives projection</td><td>To decide</td></tr>
 <tr><td>Canopy height</td><td>2.27 m (previous default, adjustable)</td><td>Assumed</td></tr>
-<tr><td>Timber frame</td><td>700 × 700 mm square</td><td>Decided</td></tr>
-<tr><td>Frame height / board</td><td>150 mm / 35 mm</td><td>Assumed</td></tr>
-<tr><td>Waterproofing</td><td>Pond liner wraps inside, top edge and outside of the frame</td><td>Decided</td></tr>
-<tr><td>Edge</td><td>Bricks placed around as edge finish</td><td>Decided</td></tr>
-<tr><td>Brick size</td><td>230 × 110 × 76 mm, two dry courses, pinwheel bond</td><td>Assumed</td></tr>
-<tr><td>Terrain</td><td>Filled with mini black pebbles forming a shallow hollow</td><td>Decided</td></tr>
-<tr><td>Pebbles / hollow</td><td>About 10–20 mm; centre about 35 mm lower</td><td>Assumed</td></tr>
-<tr><td>Puddle</td><td>Water added; fixed level, simulated about 42 × 41 cm</td><td>Method decided, size simulated</td></tr>
+<tr><td>Base</td><td>1000 × 1000 mm square</td><td>Decided</td></tr>
+<tr><td>Timber frame</td><td>Black timber frame; about 60 mm high, boards about 30 mm thick</td><td>Form decided, size estimated</td></tr>
+<tr><td>Pavers</td><td>Two rows of grey concrete pavers around the central gravel; about 200 × 100 × 50 mm</td><td>Method decided, size estimated</td></tr>
+<tr><td>Gravel area</td><td>Central black-gravel area, about 580 × 580 mm, editable in the canopy study</td><td>Method decided, size estimated from the photo</td></tr>
+<tr><td>Gravel</td><td>Black gravel bed; outside the water the stones stand about 8 mm above the surface</td><td>Decided, height estimated</td></tr>
+<tr><td>Waterproofing</td><td>Pond liner under the gravel</td><td>Assumed</td></tr>
+<tr><td>Water surface</td><td>An irregular patch in the middle of the gravel, about 420 × 380 mm overall (editable), about 50 mm above the floor, fixed level</td><td>Assumed</td></tr>
 </tbody></table></div></details>
 <details open><summary>Simulation notes<span>NOTES</span></summary><div class="details-body">
-<p>The puddle outline comes from the pebble terrain and a fixed water level: terrain below the surface shows as water. Water-level change and shoreline retreat are no longer simulated.</p>
+<p>The pond is the whole central gravel area filled with water, drawn as a rectangle at a fixed level; individual gravel stones are not modelled.</p>
 <p>The canopy underside shows the same live sky as Projection settings, drawn as added light. Projector model, position and throw distance are undecided and not modelled.</p>
-<p>Reflection brightness, water colour and pebble form are visual approximations without optical or material calibration. The lighting switch compares how ambient light affects projection legibility.</p>
+<p>The canopy study uses plane-mirror reflection: the water is perfectly still, the canopy is a horizontal plane, the eye is a single point, and heads or bodies blocking the view are ignored. Reflection brightness and water colour are visual approximations without optical calibration. The lighting switch compares how ambient light affects projection legibility.</p>
 <button id="open-projection-settings">Open projection settings →</button>
-</div></details></aside></div></section></main><div id="fatal" role="alert" hidden></div><div id="projection-hint" hidden>Double-click for full screen · Esc to exit</div></body>
+</div></details></aside></div></section></main><div id="fatal" role="alert" hidden></div></body>
 </html>

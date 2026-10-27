@@ -1,4 +1,4 @@
-import {puddles,landRadius,panelHalfSize,waterSurface} from './layout.mjs?v=2026.10.19.2';
+import {puddles,landRadius,panelHalfSize,waterSurface} from './layout.mjs?v=2026.10.27.1';
 export const PARTS={
  rock:{name:'石块',size:[.8,.5,.65],material:'stone',color:'#96978f'},
  bench:{name:'长凳',size:[1.4,.48,.48],material:'wood',color:'#b29266'},

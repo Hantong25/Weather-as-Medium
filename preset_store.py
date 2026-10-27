@@ -15,10 +15,11 @@ class Conflict(Exception):
     pass
 
 def validate_store(value):
-    if not isinstance(value, dict) or value.get('version') not in (1, 2):
+    if not isinstance(value, dict) or value.get('version') not in (1, 2, 3):
         raise ValueError('Unsupported preset format; existing data was not changed')
-    for key in ('scenes', 'colours'):
-        items = value.get(key)
+    # Version 3 adds saved cloud looks; earlier files have none.
+    for key in ('scenes', 'colours', 'clouds'):
+        items = value.get(key, []) if key == 'clouds' else value.get(key)
         if not isinstance(items, list) or len(items) > 100:
             raise ValueError('Invalid preset collection')
         ids = set()
@@ -48,6 +49,10 @@ def validate_store(value):
                 timing = data['timing']
                 if any(not isinstance(timing.get(k), list) or len(timing[k]) != 4 or any(isinstance(n, bool) or not isinstance(n, (int, float)) or not math.isfinite(n) or n <= 0 or n > 300 for n in timing[k]) for k in ('stages', 'rates')):
                     raise ValueError('Invalid timing parameters')
+            if key == 'clouds':
+                look = item.get('look')
+                if not isinstance(look, dict) or not isinstance(look.get('cloudForm'), str) or any(k != 'cloudForm' and (isinstance(n, bool) or not isinstance(n, (int, float)) or not math.isfinite(n) or abs(n) > 100) for k, n in look.items()):
+                    raise ValueError('Invalid cloud look')
             if key == 'colours':
                 colors = item.get('colors')
                 if not isinstance(colors, list) or len(colors) != 6 or any(not isinstance(c, str) or len(c) != 7 or c[0] != '#' or any(x not in '0123456789abcdefABCDEF' for x in c[1:]) for c in colors):
@@ -109,3 +114,30 @@ def save_store(directory, value, expected):
             atomic_write(directory / 'presets.previous.json', path.read_bytes())
         atomic_write(path, raw)
     return hashlib.sha256(raw).hexdigest()
+
+def validate_mapping(value):
+    # Projection mapping: the canopy's four corners as [x, y] fractions of the projector window (top left, top right,
+    # bottom right, bottom left), or None when mapping is off.
+    corners = value.get('corners') if isinstance(value, dict) and value.get('version') == 1 else False
+    number = lambda n: not isinstance(n, bool) and isinstance(n, (int, float)) and math.isfinite(n) and -1 <= n <= 2
+    if corners is not None and not (isinstance(corners, list) and len(corners) == 4 and all(isinstance(p, list) and len(p) == 2 and all(number(n) for n in p) for p in corners)):
+        raise ValueError('Invalid projection mapping')
+    return {'version': 1, 'corners': corners}
+
+def read_mapping(directory):
+    path = Path(directory) / 'mapping.json'
+    if not path.exists():
+        return {'version': 1, 'corners': None}
+    raw = path.read_bytes()
+    if len(raw) > 65536:
+        raise ValueError('Mapping file is too large; it was not changed')
+    return validate_mapping(json.loads(raw, parse_constant=lambda x: (_ for _ in ()).throw(ValueError('Invalid number'))))
+
+def save_mapping(directory, value):
+    raw = (json.dumps(validate_mapping(value), allow_nan=False) + '\n').encode('utf-8')
+    directory = Path(directory)
+    with locked(directory):
+        path = directory / 'mapping.json'
+        if path.exists():
+            atomic_write(directory / 'mapping.previous.json', path.read_bytes())
+        atomic_write(path, raw)

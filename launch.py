@@ -11,10 +11,10 @@ import time
 import urllib.request
 import webbrowser
 from urllib.parse import urlsplit
-from preset_store import DEFAULT_DATA_DIR, MAX_BYTES, Conflict, read_store, save_store
+from preset_store import DEFAULT_DATA_DIR, MAX_BYTES, Conflict, read_store, save_store, read_mapping, save_mapping
 
 ROOT = Path(__file__).resolve().parent
-RELEASE = "2026.10.19.2"
+RELEASE = "2026.10.27.1"
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
@@ -38,7 +38,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(raw)
 
     def do_POST(self):
-        if urlsplit(self.path).path != '/api/presets':
+        path = urlsplit(self.path).path
+        if path not in ('/api/presets', '/api/mapping'):
             self.send_error(404)
             return
         if not self.api_allowed() or self.headers.get('Content-Type', '').split(';')[0] != 'application/json':
@@ -50,6 +51,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 self.send_json(413, {'error': 'Invalid request size'})
                 return
             value = json.loads(self.rfile.read(size), parse_constant=lambda x: (_ for _ in ()).throw(ValueError('Invalid number')))
+            if path == '/api/mapping':
+                save_mapping(self.server.data_dir, value)
+                self.send_json(200, {'saved': True})
+                return
             revision = save_store(self.server.data_dir, value, self.headers.get('If-Match'))
             self.send_json(200, {'revision': revision})
         except Conflict as error:
@@ -58,6 +63,15 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_json(422, {'error': str(error)})
 
     def do_GET(self):
+        if urlsplit(self.path).path == '/api/mapping':
+            if not self.api_allowed():
+                self.send_json(403, {'error': 'Local requests only'})
+                return
+            try:
+                self.send_json(200, {'mapping': read_mapping(self.server.data_dir)})
+            except (ValueError, OSError) as error:
+                self.send_json(422, {'error': str(error)})
+            return
         if urlsplit(self.path).path == '/api/presets':
             if not self.api_allowed():
                 self.send_json(403, {'error': 'Local requests only'})
@@ -114,7 +128,7 @@ def main():
         server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), handler)
     server.data_dir = args.data_dir.expanduser().resolve()
     url = f'http://127.0.0.1:{server.server_port}/{entry}'
-    print(f'Ephemeral is running: {url}\nKeep this window open. Press Control-C to stop.', flush=True)
+    print(f'Accumulus is running: {url}\nKeep this window open. Press Control-C to stop.', flush=True)
     if not args.no_browser:
         threading.Timer(.3, lambda: webbrowser.open(url)).start()
     try:

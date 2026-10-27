@@ -1,6 +1,6 @@
 // Physically based sky: Melbourne sun path plus single-scattering Rayleigh, Mie and ozone (Nishita-style), in km.
 // The same model runs per pixel in GLSL and a few times per frame in JS for cloud lighting and exposure.
-import { compassToCanvas } from './forecast.mjs?v=2026.10.19.2';
+import { compassToCanvas } from './forecast.mjs?v=2026.10.27.1';
 export const SITE = { latitude: -37.81, declination: -7 }; // Melbourne, mid-October
 const R = Math.PI / 180, RE = 6360, RA = 6420, HR = 8, HM = 1.2, SUN = 20, G = .76;
 const BR = [5.8e-3, 13.5e-3, 33.1e-3], BO = [.65e-3, 1.881e-3, .085e-3];
@@ -85,22 +85,28 @@ export function skyRadiance(ray, sun, air = 2.5) {
   return [SUN * (r0 * BR[0] * pr + m0 * M * k0 * pm), SUN * (r1 * BR[1] * pr + m1 * M * k1 * pm), SUN * (r2 * BR[2] * pr + m2 * M * k2 * pm)];
 }
 export const luminance = c => .2126 * c[0] + .7152 * c[1] + .0722 * c[2];
-// Per-frame lighting shared by both windows: sun direction, sunlight on clouds (~2 km), sky ambient and exposure.
-export function skyState(hour, { turbidity = 2.5, ozone = 1, tint = [1, 1, 1], cityGlow = .6, north = 0, overcast = 0 } = {}) {
+// A full moon stands opposite the sun. Its light on the clouds is cool and, at the night exposure, a mid grey at
+// moonlight 1; it takes over from the sun at −7°, where both have faded to nothing (sunlight on clouds at 3 km is gone
+// once the sun is 2° down), so the switch never shows.
+const MOON = [.13, .15, .19];
+// Per-frame lighting shared by both windows: sun direction (for the sky), the light on the clouds (light: direction,
+// sunCloud: colour; the sun by day, the moon by night), sky ambient and exposure.
+export function skyState(hour, { turbidity = 2.5, ozone = 1, tint = [1, 1, 1], cityGlow = .6, moonlight = 1, north = 0 } = {}) {
   // Afternoon heating and traffic usually leave more aerosol by evening: warmer, softer sunsets than sunrises.
   turbidity *= 1 + .45 * Math.min(1, Math.max(0, (((hour + 180) % 360 - 180) + 30) / 120));
   const { elevation, azimuth } = solarPosition(hour), sun = sunVector(elevation, azimuth, north), air = { turbidity, ozone, tint };
   const rays = [[0, 0, 1], ...[0, 60, 120, 180, 240, 300].map(a => [Math.cos(a * R) * .866, Math.sin(a * R) * .866, .5])];
   const ambient = [0, 0, 0];
   for (const ray of rays) skyRadiance(ray, sun, air).forEach((v, c) => ambient[c] += v / rays.length);
-  const sunCloud = sunlight(sun, 3, air).map(v => v * (1 - .85 * overcast));
+  const moon = Math.min(1, Math.max(0, (-elevation - 7) / 7)), light = elevation < -7 ? sunVector(-elevation, azimuth + 180, north) : sun;
+  const sunCloud = elevation < -7 ? MOON.map(v => v * moon * moon * (3 - 2 * moon) * moonlight) : sunlight(sun, 3, air);
   // Night: faint airglow/starlight and warm light from the city reflected by cloud bases (Melbourne, not a dark site).
   const night = [.0004, .0006, .0011], city = [.0085, .0074, .0064].map(v => v * cityGlow);
   // Exposure follows scene brightness like an adapting eye, but night keeps a floor so it still reads as night.
   const exposure = .22 / (luminance(ambient) + .012);
-  // Stars only before dawn once the overcast has cleared and the sky is properly dark.
-  const stars = (1 - overcast) * Math.min(1, Math.max(0, (-elevation - 8) / 6));
-  return { elevation, azimuth, sun, sunCloud, stars, ambient: ambient.map(v => v * (1 - .55 * overcast)), night, city, exposure, cityGlow, turbidity, air, overcast };
+  // Stars come out as the sky darkens, fully from −14°.
+  const stars = Math.min(1, Math.max(0, (-elevation - 8) / 6));
+  return { elevation, azimuth, sun, light, sunCloud, stars, ambient, night, city, exposure, cityGlow, turbidity, air };
 }
 
 // Sky radiance over the canopy as a small RGBA table (exposure applied, sqrt-encoded up to 4). Sky light is smooth,
@@ -121,9 +127,7 @@ export function skyTableRows(state, data, j0, j1, size = TABLE_SIZE, span = TABL
 export const skyTable = (state, size = TABLE_SIZE, span = TABLE_SPAN) => skyTableRows(state, new Uint8ClampedArray(size * size * 4), 0, size, size, span);
 // Per-frame lighting between two precomputed states; exposure blends in log space like an eye adapting.
 export function blendLight(a, b, t) {
-  const mix = (x, y) => x.map((v, i) => v + (y[i] - v) * t), sun = mix(a.sun, b.sun), n = Math.hypot(...sun) || 1;
-  return { sun: sun.map(v => v / n), sunCloud: mix(a.sunCloud, b.sunCloud), ambient: mix(a.ambient, b.ambient), night: a.night, city: mix(a.city, b.city),
+  const mix = (x, y) => x.map((v, i) => v + (y[i] - v) * t), unit = v => { const n = Math.hypot(...v) || 1; return v.map(x => x / n); };
+  return { sun: unit(mix(a.sun, b.sun)), light: unit(mix(a.light, b.light)), sunCloud: mix(a.sunCloud, b.sunCloud), ambient: mix(a.ambient, b.ambient), night: a.night, city: mix(a.city, b.city),
     stars: a.stars + (b.stars - a.stars) * t, exposure: Math.exp(Math.log(a.exposure) + (Math.log(b.exposure) - Math.log(a.exposure)) * t) };
 }
-// Night cloud cover dims sunlight, skylight and stars; applied per frame so tables never depend on it.
-export const applyOvercast = (light, overcast) => ({ ...light, sunCloud: light.sunCloud.map(v => v * (1 - .85 * overcast)), ambient: light.ambient.map(v => v * (1 - .55 * overcast)), stars: light.stars * (1 - overcast) });
